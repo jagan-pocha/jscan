@@ -176,13 +176,13 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
   const getValidationTitle = () => {
     switch (activeValidation) {
       case 'missing':
-        return '✅ Missing Fields Validation';
+        return 'Missing Fields Validation';
       case 'additional':
-        return '🚫 Additional Fields Validation';
+        return 'Additional Fields Validation';
       case 'types':
-        return '🔎 Data Types Validation';
+        return 'Data Types Validation';
       default:
-        return '📊 Validation Results';
+        return 'Validation Results';
     }
   };
 
@@ -315,7 +315,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
         <div className="no-results">
           {activeValidation ? (
             <>
-              <div className="no-results-icon">🎉</div>
+              <div className="no-results-icon">✓</div>
               <h4>No Issues Found!</h4>
               <p>
                 {activeValidation === 'missing' && 'All template fields are present in the JSON data.'}
@@ -325,7 +325,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
             </>
           ) : (
             <>
-              <div className="no-results-icon">📊</div>
+              <div className="no-results-icon">→</div>
               <h4>Ready for Validation</h4>
               <p>
                 Create a template on the left, add JSON data above, then click a validation button to see results here.
