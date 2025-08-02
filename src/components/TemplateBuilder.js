@@ -148,10 +148,10 @@ const TemplateBuilder = ({ template, setTemplate }) => {
         <h2>📝 Template Builder</h2>
         <div className="template-actions">
           <button onClick={loadSampleTemplate} className="sample-template-btn">
-            📋 Sample
+            Sample
           </button>
           <button onClick={clearTemplate} className="clear-template-btn">
-            🗑️ Clear
+            Clear
           </button>
         </div>
       </div>
