@@ -120,6 +120,13 @@
   margin-bottom: 16px;
 }
 
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  padding: 20px;
+}
+
 .no-results h4 {
   margin: 0 0 12px 0;
   color: #374151;
