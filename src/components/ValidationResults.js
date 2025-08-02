@@ -5,6 +5,114 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './ValidationResults.css';
 
 const ValidationResults = ({ results, activeValidation }) => {
+  // Get the current JSON data from parent component or extract from validation context
+  const [jsonData, setJsonData] = React.useState(null);
+  const [template, setTemplate] = React.useState(null);
+
+  // Extract data from validation results or get from parent
+  React.useEffect(() => {
+    // We'll need to pass this data from parent component
+    // For now, let's try to get it from the DOM or parent
+  }, []);
+
+  const createDataTable = () => {
+    // This will create the enhanced table based on JSON structure
+    try {
+      // Get JSON data from textarea in the DOM as fallback
+      const textareaElement = document.querySelector('.json-textarea');
+      const templateElement = document.querySelector('.json-preview');
+
+      if (textareaElement && templateElement) {
+        const jsonContent = JSON.parse(textareaElement.value);
+        const templateContent = JSON.parse(templateElement.textContent);
+
+        return generateEnhancedTable(jsonContent, templateContent, activeValidation);
+      }
+    } catch (error) {
+      console.error('Error parsing data for enhanced table:', error);
+    }
+    return null;
+  };
+
+  const generateEnhancedTable = (jsonData, template, validationType) => {
+    const allProperties = getAllProperties(template);
+
+    // Check if jsonData is an array of objects or single object
+    const dataArray = Array.isArray(jsonData) ? jsonData : [jsonData];
+    const isArrayData = Array.isArray(jsonData);
+
+    // Create table structure
+    const tableData = dataArray.map((item, index) => {
+      const row = {
+        rowIndex: isArrayData ? index + 1 : 'Single Object',
+        ...allProperties.reduce((acc, prop) => {
+          const value = getNestedValue(item, prop);
+          const hasValue = value !== undefined && value !== null;
+          const expectedType = getExpectedType(template, prop);
+          const actualType = hasValue ? (Array.isArray(value) ? 'array' : typeof value) : 'missing';
+
+          acc[prop] = {
+            value: hasValue ? value : '❌',
+            hasValue,
+            expectedType,
+            actualType,
+            isValid: hasValue && (actualType === expectedType || (expectedType === 'array' && Array.isArray(value)))
+          };
+          return acc;
+        }, {})
+      };
+      return row;
+    });
+
+    return { tableData, allProperties, isArrayData };
+  };
+
+  const getAllProperties = (template) => {
+    const props = new Set();
+
+    const traverse = (obj, prefix = '') => {
+      Object.keys(obj).forEach(key => {
+        if (obj[key] && typeof obj[key] === 'object') {
+          if (obj[key].type === 'object' && obj[key].properties) {
+            traverse(obj[key].properties, prefix ? `${prefix}.${key}` : key);
+          } else if (obj[key].type && obj[key].type !== 'object') {
+            props.add(prefix ? `${prefix}.${key}` : key);
+          }
+        } else {
+          props.add(prefix ? `${prefix}.${key}` : key);
+        }
+      });
+    };
+
+    traverse(template);
+    return Array.from(props);
+  };
+
+  const getNestedValue = (obj, path) => {
+    return path.split('.').reduce((current, key) => {
+      return current && current[key] !== undefined ? current[key] : undefined;
+    }, obj);
+  };
+
+  const getExpectedType = (template, path) => {
+    const keys = path.split('.');
+    let current = template;
+
+    for (const key of keys) {
+      if (current[key]) {
+        if (current[key].type) {
+          if (keys.indexOf(key) === keys.length - 1) {
+            return current[key].type;
+          } else if (current[key].type === 'object' && current[key].properties) {
+            current = current[key].properties;
+          }
+        }
+      }
+    }
+    return 'unknown';
+  };
+
+  const enhancedTable = createDataTable();
   const columnDefs = useMemo(() => [
     {
       headerName: 'Field Name',
