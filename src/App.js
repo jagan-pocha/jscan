@@ -113,34 +113,38 @@ function App() {
       </header>
       
       <div className="app-content">
-        <div className="left-panel">
-          <TemplateBuilder template={template} setTemplate={setTemplate} />
+        <div className="top-panels">
+          <div className="left-panel">
+            <TemplateBuilder template={template} setTemplate={setTemplate} />
+          </div>
+
+          <div className="right-panel">
+            <JsonInput jsonData={jsonData} setJsonData={setJsonData} />
+          </div>
         </div>
-        
-        <div className="right-panel">
-          <JsonInput jsonData={jsonData} setJsonData={setJsonData} />
-          
+
+        <div className="bottom-panel">
           <div className="validation-controls">
-            <button 
+            <button
               className="validation-btn missing"
               onClick={() => validateJson('missing')}
             >
-              ✅ Find Missing Fields
+              Find Missing Fields
             </button>
-            <button 
+            <button
               className="validation-btn additional"
               onClick={() => validateJson('additional')}
             >
-              🚫 Find Additional Fields
+              Find Additional Fields
             </button>
-            <button 
+            <button
               className="validation-btn types"
               onClick={() => validateJson('types')}
             >
-              🔎 Check Data Types
+              Check Data Types
             </button>
           </div>
-          
+
           <ValidationResults
             results={validationResults}
             activeValidation={activeValidation}
