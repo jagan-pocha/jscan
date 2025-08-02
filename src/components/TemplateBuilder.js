@@ -82,22 +82,36 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     setTemplate(newTemplate);
   };
 
-  const addNestedField = (parentField, childName, childType) => {
+  const addNestedField = (parentPath, childName, childType) => {
     if (childName.trim()) {
       const newTemplate = { ...template };
-      if (!newTemplate[parentField].properties) {
-        newTemplate[parentField].properties = {};
+
+      // Navigate to the correct nested object
+      const pathParts = parentPath.split('.');
+      let current = newTemplate;
+
+      for (const part of pathParts) {
+        if (!current[part]) return; // Path doesn't exist
+        if (current[part].type === 'object') {
+          if (!current[part].properties) {
+            current[part].properties = {};
+          }
+          current = current[part].properties;
+        } else {
+          return; // Not an object type
+        }
       }
-      
+
+      // Add the new field
       if (childType === 'object') {
-        newTemplate[parentField].properties[childName] = {
+        current[childName] = {
           type: 'object',
           properties: {}
         };
       } else {
-        newTemplate[parentField].properties[childName] = { type: childType };
+        current[childName] = { type: childType };
       }
-      
+
       setTemplate(newTemplate);
     }
   };
@@ -133,8 +147,8 @@ const TemplateBuilder = ({ template, setTemplate }) => {
             {fieldConfig.properties && Object.keys(fieldConfig.properties).map(nestedField =>
               renderField(nestedField, fieldConfig.properties[nestedField], level + 1, currentPath)
             )}
-            <NestedFieldAdder 
-              onAdd={(name, type) => addNestedField(fieldName, name, type)}
+            <NestedFieldAdder
+              onAdd={(name, type) => addNestedField(currentPath, name, type)}
             />
           </div>
         )}
