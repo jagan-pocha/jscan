@@ -11,6 +11,12 @@ function App() {
   const [activeValidation, setActiveValidation] = useState(null);
 
   const validateJson = useCallback((type) => {
+    if (!jsonData.trim()) {
+      setValidationResults([]);
+      setActiveValidation(type);
+      return;
+    }
+
     try {
       const parsedData = JSON.parse(jsonData);
       const results = performValidation(template, parsedData, type);
@@ -140,6 +146,9 @@ function App() {
             activeValidation={activeValidation}
             template={template}
             jsonData={jsonData}
+            parsedJsonData={jsonData.trim() ? (() => {
+              try { return JSON.parse(jsonData); } catch { return null; }
+            })() : null}
           />
         </div>
       </div>
