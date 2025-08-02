@@ -5,16 +5,18 @@ const JsonInput = ({ jsonData, setJsonData }) => {
   const [isValidJson, setIsValidJson] = useState(true);
   const [jsonError, setJsonError] = useState('');
   const [formattedJson, setFormattedJson] = useState('');
+  const [parsedData, setParsedData] = useState(null);
 
   useEffect(() => {
     validateAndFormat(jsonData);
   }, [jsonData]);
 
   const validateAndFormat = (input) => {
-    if (!input.trim()) {
+    if (!input || !input.trim()) {
       setIsValidJson(true);
       setJsonError('');
       setFormattedJson('');
+      setParsedData(null);
       return;
     }
 
@@ -24,10 +26,12 @@ const JsonInput = ({ jsonData, setJsonData }) => {
       setIsValidJson(true);
       setJsonError('');
       setFormattedJson(formatted);
+      setParsedData(parsed);
     } catch (error) {
       setIsValidJson(false);
       setJsonError(error.message);
       setFormattedJson('');
+      setParsedData(null);
     }
   };
 
@@ -94,9 +98,9 @@ const JsonInput = ({ jsonData, setJsonData }) => {
             ❌ <strong>JSON Error:</strong> {jsonError}
           </div>
         )}
-        {isValidJson && jsonData.trim() && (
+        {isValidJson && jsonData.trim() && parsedData !== null && (
           <div className="json-valid">
-            ✅ <strong>Valid JSON</strong> ({JSON.stringify(JSON.parse(jsonData)).length} characters)
+            ✅ <strong>Valid JSON</strong> ({JSON.stringify(parsedData).length} characters)
           </div>
         )}
         {!jsonData.trim() && (
