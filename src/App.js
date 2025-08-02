@@ -135,9 +135,11 @@ function App() {
             </button>
           </div>
           
-          <ValidationResults 
-            results={validationResults} 
+          <ValidationResults
+            results={validationResults}
             activeValidation={activeValidation}
+            template={template}
+            jsonData={jsonData}
           />
         </div>
       </div>
