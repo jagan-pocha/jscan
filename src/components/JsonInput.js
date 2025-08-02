@@ -79,7 +79,7 @@ const JsonInput = ({ jsonData, setJsonData }) => {
   return (
     <div className="json-input">
       <div className="json-input-header">
-        <h2>📄 JSON Data Input</h2>
+        <h2>JSON Data Input</h2>
         <div className="json-actions">
           <button onClick={formatJson} className="format-btn" disabled={!isValidJson}>
             Format

@@ -145,7 +145,7 @@ const TemplateBuilder = ({ template, setTemplate }) => {
   return (
     <div className="template-builder">
       <div className="template-header">
-        <h2>📝 Template Builder</h2>
+        <h2>Template Builder</h2>
         <div className="template-actions">
           <button onClick={loadSampleTemplate} className="sample-template-btn">
             Sample
@@ -190,7 +190,7 @@ const TemplateBuilder = ({ template, setTemplate }) => {
       </div>
 
       <div className="template-preview">
-        <h3>📋 Current Template</h3>
+        <h3>Current Template</h3>
         <pre className="json-preview">
           {JSON.stringify(template, null, 2)}
         </pre>
