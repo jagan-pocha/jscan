@@ -4,34 +4,19 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './ValidationResults.css';
 
-const ValidationResults = ({ results, activeValidation }) => {
-  // Get the current JSON data from parent component or extract from validation context
-  const [jsonData, setJsonData] = React.useState(null);
-  const [template, setTemplate] = React.useState(null);
-
-  // Extract data from validation results or get from parent
-  React.useEffect(() => {
-    // We'll need to pass this data from parent component
-    // For now, let's try to get it from the DOM or parent
-  }, []);
-
+const ValidationResults = ({ results, activeValidation, template, jsonData }) => {
   const createDataTable = () => {
-    // This will create the enhanced table based on JSON structure
+    if (!jsonData || !template || Object.keys(template).length === 0) {
+      return null;
+    }
+
     try {
-      // Get JSON data from textarea in the DOM as fallback
-      const textareaElement = document.querySelector('.json-textarea');
-      const templateElement = document.querySelector('.json-preview');
-
-      if (textareaElement && templateElement) {
-        const jsonContent = JSON.parse(textareaElement.value);
-        const templateContent = JSON.parse(templateElement.textContent);
-
-        return generateEnhancedTable(jsonContent, templateContent, activeValidation);
-      }
+      const parsedData = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+      return generateEnhancedTable(parsedData, template, activeValidation);
     } catch (error) {
       console.error('Error parsing data for enhanced table:', error);
+      return null;
     }
-    return null;
   };
 
   const generateEnhancedTable = (jsonData, template, validationType) => {
