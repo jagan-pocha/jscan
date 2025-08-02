@@ -144,7 +144,17 @@ const TemplateBuilder = ({ template, setTemplate }) => {
 
       for (const part of pathParts) {
         if (!current[part]) return; // Path doesn't exist
-        if (current[part].type === 'object') {
+
+        if (part === 'items' && current.type === 'array') {
+          // Handle array items
+          if (!current.items) {
+            current.items = { type: 'object', properties: {} };
+          }
+          if (!current.items.properties) {
+            current.items.properties = {};
+          }
+          current = current.items.properties;
+        } else if (current[part] && current[part].type === 'object') {
           if (!current[part].properties) {
             current[part].properties = {};
           }
