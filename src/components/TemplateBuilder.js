@@ -8,7 +8,7 @@ const TemplateBuilder = ({ template, setTemplate }) => {
   const addField = () => {
     if (newFieldName.trim()) {
       const newTemplate = { ...template };
-      
+
       if (newFieldType === 'object') {
         newTemplate[newFieldName] = {
           type: 'object',
@@ -22,10 +22,40 @@ const TemplateBuilder = ({ template, setTemplate }) => {
       } else {
         newTemplate[newFieldName] = { type: newFieldType };
       }
-      
+
       setTemplate(newTemplate);
       setNewFieldName('');
     }
+  };
+
+  const loadSampleTemplate = () => {
+    const sampleTemplate = {
+      "name": { type: "string" },
+      "age": { type: "number" },
+      "email": { type: "string" },
+      "isActive": { type: "boolean" },
+      "address": {
+        type: "object",
+        properties: {
+          "street": { type: "string" },
+          "city": { type: "string" },
+          "zipCode": { type: "string" }
+        }
+      },
+      "hobbies": { type: "array" },
+      "metadata": {
+        type: "object",
+        properties: {
+          "createdAt": { type: "string" },
+          "updatedAt": { type: "string" }
+        }
+      }
+    };
+    setTemplate(sampleTemplate);
+  };
+
+  const clearTemplate = () => {
+    setTemplate({});
   };
 
   const removeField = (fieldName) => {
@@ -114,7 +144,17 @@ const TemplateBuilder = ({ template, setTemplate }) => {
 
   return (
     <div className="template-builder">
-      <h2>📝 Template Builder</h2>
+      <div className="template-header">
+        <h2>📝 Template Builder</h2>
+        <div className="template-actions">
+          <button onClick={loadSampleTemplate} className="sample-template-btn">
+            📋 Sample
+          </button>
+          <button onClick={clearTemplate} className="clear-template-btn">
+            🗑️ Clear
+          </button>
+        </div>
+      </div>
       
       <div className="add-field-section">
         <div className="add-field-form">
