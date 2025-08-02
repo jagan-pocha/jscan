@@ -168,12 +168,45 @@ const TemplateBuilder = ({ template, setTemplate }) => {
         
         {fieldConfig.type === 'object' && (
           <div className="nested-fields">
+            <div className="nested-header">
+              <span className="nested-title">Object Properties:</span>
+            </div>
             {fieldConfig.properties && Object.keys(fieldConfig.properties).map(nestedField =>
               renderField(nestedField, fieldConfig.properties[nestedField], level + 1, currentPath)
             )}
             <NestedFieldAdder
               onAdd={(name, type) => addNestedField(currentPath, name, type)}
             />
+          </div>
+        )}
+
+        {fieldConfig.type === 'array' && (
+          <div className="nested-fields">
+            <div className="nested-header">
+              <span className="nested-title">Array Item Type:</span>
+              <select
+                value={fieldConfig.items?.type || 'string'}
+                onChange={(e) => updateArrayItemType(currentPath, e.target.value)}
+                className="array-item-type-select"
+              >
+                <option value="string">String</option>
+                <option value="number">Number</option>
+                <option value="boolean">Boolean</option>
+                <option value="object">Object</option>
+              </select>
+            </div>
+
+            {fieldConfig.items?.type === 'object' && (
+              <div className="array-object-fields">
+                <div className="nested-title">Object Structure in Array:</div>
+                {fieldConfig.items.properties && Object.keys(fieldConfig.items.properties).map(nestedField =>
+                  renderField(nestedField, fieldConfig.items.properties[nestedField], level + 1, `${currentPath}.items`)
+                )}
+                <NestedFieldAdder
+                  onAdd={(name, type) => addNestedField(`${currentPath}.items`, name, type)}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
