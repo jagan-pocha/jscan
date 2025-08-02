@@ -23,11 +23,18 @@
 }
 
 .app-content {
-  display: flex;
-  gap: 20px;
   max-width: 1400px;
   margin: 0 auto;
   height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.top-panels {
+  display: flex;
+  gap: 20px;
+  height: 60%;
 }
 
 .left-panel, .right-panel {
@@ -43,6 +50,17 @@
 
 .left-panel {
   min-width: 450px;
+}
+
+.bottom-panel {
+  height: 40%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
 }
 
 .validation-controls {
