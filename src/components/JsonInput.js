@@ -96,17 +96,17 @@ const JsonInput = ({ jsonData, setJsonData }) => {
       <div className="json-status">
         {!isValidJson && (
           <div className="json-error">
-            ❌ <strong>JSON Error:</strong> {jsonError}
+            <strong>JSON Error:</strong> {jsonError}
           </div>
         )}
         {isValidJson && jsonData.trim() && parsedData !== null && (
           <div className="json-valid">
-            ✅ <strong>Valid JSON</strong> ({JSON.stringify(parsedData).length} characters)
+            <strong>Valid JSON</strong> ({JSON.stringify(parsedData).length} characters)
           </div>
         )}
         {!jsonData.trim() && (
           <div className="json-empty">
-            💭 Paste your JSON data here or load a sample
+            Paste your JSON data here or load a sample
           </div>
         )}
       </div>
