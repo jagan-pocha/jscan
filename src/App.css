@@ -104,18 +104,27 @@
 
 @media (max-width: 1024px) {
   .app-content {
+    height: auto;
+  }
+
+  .top-panels {
     flex-direction: column;
     height: auto;
   }
-  
+
   .left-panel, .right-panel {
     min-width: auto;
   }
-  
+
+  .bottom-panel {
+    height: auto;
+    min-height: 400px;
+  }
+
   .validation-controls {
     flex-direction: column;
   }
-  
+
   .validation-btn {
     min-width: auto;
   }
