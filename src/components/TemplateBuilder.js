@@ -147,9 +147,9 @@ const TemplateBuilder = ({ template, setTemplate }) => {
       <div key={currentPath} className={`field-item level-${level}`}>
         <div className="field-header">
           <span className="field-name">{fieldName}</span>
-          <select 
+          <select
             value={fieldConfig.type}
-            onChange={(e) => updateFieldType(fieldName, e.target.value)}
+            onChange={(e) => updateFieldType(currentPath, e.target.value)}
             className="field-type-select"
           >
             <option value="string">String</option>
@@ -158,8 +158,8 @@ const TemplateBuilder = ({ template, setTemplate }) => {
             <option value="object">Object</option>
             <option value="array">Array</option>
           </select>
-          <button 
-            onClick={() => removeField(fieldName)}
+          <button
+            onClick={() => removeField(currentPath)}
             className="remove-btn"
           >
             ✕
