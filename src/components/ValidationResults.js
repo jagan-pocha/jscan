@@ -231,6 +231,62 @@ const ValidationResults = ({ results, activeValidation, template, jsonData }) =>
     );
   };
 
+  const enhancedTableData = createDataTable();
+
+  const renderEnhancedTable = () => {
+    if (!enhancedTableData) return null;
+
+    const { tableData, allProperties, isArrayData } = enhancedTableData;
+
+    return (
+      <div className="enhanced-table-container">
+        <table className="enhanced-validation-table">
+          <thead>
+            <tr>
+              {isArrayData && <th className="row-index-header">Index</th>}
+              {!isArrayData && <th className="row-index-header">Property</th>}
+              {allProperties.map(prop => (
+                <th key={prop} className="property-header">
+                  {prop}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row, index) => (
+              <tr key={index} className="data-row">
+                <td className="row-index-cell">
+                  {row.rowIndex}
+                </td>
+                {allProperties.map(prop => {
+                  const cellData = row[prop];
+                  return (
+                    <td
+                      key={prop}
+                      className={`property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'}`}
+                      title={cellData ? `Expected: ${cellData.expectedType}, Actual: ${cellData.actualType}` : ''}
+                    >
+                      {cellData?.hasValue ? (
+                        <div className="cell-content">
+                          <span className="cell-value">
+                            {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}
+                          </span>
+                          {!cellData.isValid && <span className="type-mismatch">⚠️</span>}
+                        </div>
+                      ) : (
+                        <span className="missing-indicator">❌</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   return (
     <div className="validation-results">
       <div className="results-header">
@@ -239,7 +295,9 @@ const ValidationResults = ({ results, activeValidation, template, jsonData }) =>
         {getResultsSummary()}
       </div>
 
-      {results.length > 0 ? (
+      {enhancedTableData ? (
+        renderEnhancedTable()
+      ) : jsonData && template && Object.keys(template).length > 0 ? (
         <div className="ag-theme-alpine results-grid">
           <AgGridReact
             rowData={results}
