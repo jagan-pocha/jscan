@@ -94,7 +94,15 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     // Navigate to parent object
     let current = newTemplate;
     for (const part of pathParts) {
-      if (current[part] && current[part].type === 'object') {
+      if (part === 'items' && current.type === 'array') {
+        if (!current.items) {
+          current.items = { type: 'object', properties: {} };
+        }
+        if (!current.items.properties) {
+          current.items.properties = {};
+        }
+        current = current.items.properties;
+      } else if (current[part] && current[part].type === 'object') {
         current = current[part].properties;
       }
     }
@@ -112,7 +120,15 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     // Navigate to parent object
     let current = newTemplate;
     for (const part of pathParts) {
-      if (current[part] && current[part].type === 'object') {
+      if (part === 'items' && current.type === 'array') {
+        if (!current.items) {
+          current.items = { type: 'object', properties: {} };
+        }
+        if (!current.items.properties) {
+          current.items.properties = {};
+        }
+        current = current.items.properties;
+      } else if (current[part] && current[part].type === 'object') {
         current = current[part].properties;
       }
     }
