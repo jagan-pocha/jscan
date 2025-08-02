@@ -42,7 +42,21 @@ const TemplateBuilder = ({ template, setTemplate }) => {
           "zipCode": { type: "string" }
         }
       },
-      "hobbies": { type: "array" },
+      "hobbies": {
+        type: "array",
+        items: { type: "string" }
+      },
+      "skills": {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            "name": { type: "string" },
+            "level": { type: "number" },
+            "certified": { type: "boolean" }
+          }
+        }
+      },
       "metadata": {
         type: "object",
         properties: {
