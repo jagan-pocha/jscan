@@ -296,7 +296,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
 
       {enhancedTableData ? (
         renderEnhancedTable()
-      ) : jsonData && template && Object.keys(template).length > 0 ? (
+      ) : parsedJsonData && template && Object.keys(template).length > 0 ? (
         <div className="ag-theme-alpine results-grid">
           <AgGridReact
             rowData={results}
