@@ -58,6 +58,34 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     setTemplate({});
   };
 
+  const updateArrayItemType = (arrayPath, itemType) => {
+    const newTemplate = { ...template };
+    const pathParts = arrayPath.split('.');
+    const fieldName = pathParts.pop();
+
+    // Navigate to parent object
+    let current = newTemplate;
+    for (const part of pathParts) {
+      if (current[part] && current[part].type === 'object') {
+        current = current[part].properties;
+      }
+    }
+
+    // Update array item type
+    if (current[fieldName] && current[fieldName].type === 'array') {
+      if (itemType === 'object') {
+        current[fieldName].items = {
+          type: 'object',
+          properties: {}
+        };
+      } else {
+        current[fieldName].items = { type: itemType };
+      }
+    }
+
+    setTemplate(newTemplate);
+  };
+
   const removeField = (fieldPath) => {
     const newTemplate = { ...template };
     const pathParts = fieldPath.split('.');
