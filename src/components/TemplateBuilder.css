@@ -4,10 +4,50 @@
   flex-direction: column;
 }
 
-.template-builder h2 {
-  margin: 0 0 20px 0;
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.template-header h2 {
+  margin: 0;
   color: #1f2937;
   font-size: 1.5rem;
+}
+
+.template-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sample-template-btn, .clear-template-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sample-template-btn {
+  background: #10b981;
+  color: white;
+}
+
+.sample-template-btn:hover {
+  background: #059669;
+}
+
+.clear-template-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.clear-template-btn:hover {
+  background: #dc2626;
 }
 
 .add-field-section {
