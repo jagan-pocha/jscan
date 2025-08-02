@@ -58,26 +58,50 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     setTemplate({});
   };
 
-  const removeField = (fieldName) => {
+  const removeField = (fieldPath) => {
     const newTemplate = { ...template };
-    delete newTemplate[fieldName];
+    const pathParts = fieldPath.split('.');
+    const fieldName = pathParts.pop();
+
+    // Navigate to parent object
+    let current = newTemplate;
+    for (const part of pathParts) {
+      if (current[part] && current[part].type === 'object') {
+        current = current[part].properties;
+      }
+    }
+
+    // Remove the field
+    delete current[fieldName];
     setTemplate(newTemplate);
   };
 
-  const updateFieldType = (fieldName, newType) => {
+  const updateFieldType = (fieldPath, newType) => {
     const newTemplate = { ...template };
+    const pathParts = fieldPath.split('.');
+    const fieldName = pathParts.pop();
+
+    // Navigate to parent object
+    let current = newTemplate;
+    for (const part of pathParts) {
+      if (current[part] && current[part].type === 'object') {
+        current = current[part].properties;
+      }
+    }
+
+    // Update the field type
     if (newType === 'object') {
-      newTemplate[fieldName] = {
+      current[fieldName] = {
         type: 'object',
         properties: {}
       };
     } else if (newType === 'array') {
-      newTemplate[fieldName] = {
+      current[fieldName] = {
         type: 'array',
         items: { type: 'string' }
       };
     } else {
-      newTemplate[fieldName] = { type: newType };
+      current[fieldName] = { type: newType };
     }
     setTemplate(newTemplate);
   };
