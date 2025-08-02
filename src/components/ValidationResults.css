@@ -156,25 +156,170 @@
   border-bottom-color: #e2e8f0;
 }
 
+/* Enhanced Table Styles */
+.enhanced-table-container {
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+}
+
+.enhanced-validation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.enhanced-validation-table th {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #1f2937;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.row-index-header {
+  background: #3b82f6 !important;
+  color: white !important;
+  min-width: 80px;
+  text-align: center !important;
+}
+
+.property-header {
+  min-width: 120px;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.enhanced-validation-table td {
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  vertical-align: middle;
+}
+
+.row-index-cell {
+  background: #eff6ff;
+  font-weight: 600;
+  text-align: center;
+  color: #1e40af;
+  min-width: 80px;
+}
+
+.property-cell {
+  position: relative;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.property-cell.has-value {
+  background: #f0fdf4;
+}
+
+.property-cell.missing-value {
+  background: #fef2f2;
+  text-align: center;
+}
+
+.property-cell.valid-type {
+  border-left: 3px solid #10b981;
+}
+
+.property-cell.invalid-type.has-value {
+  border-left: 3px solid #ef4444;
+  background: #fff7ed;
+}
+
+.cell-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cell-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.missing-indicator {
+  font-size: 16px;
+  color: #dc2626;
+}
+
+.type-mismatch {
+  font-size: 14px;
+  color: #ea580c;
+}
+
+.data-row:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.data-row:hover .row-index-cell {
+  background: #dbeafe;
+}
+
+/* Responsive table */
+@media (max-width: 1024px) {
+  .enhanced-table-container {
+    font-size: 12px;
+  }
+
+  .enhanced-validation-table th,
+  .enhanced-validation-table td {
+    padding: 6px 4px;
+  }
+
+  .property-header {
+    min-width: 100px;
+    max-width: 150px;
+  }
+}
+
 @media (max-width: 768px) {
   .results-summary {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .summary-item {
     text-align: center;
   }
-  
+
   .results-grid {
     min-height: 250px;
   }
-  
+
   .no-results {
     padding: 20px 16px;
   }
-  
+
   .no-results-icon {
     font-size: 2.5rem;
+  }
+
+  .enhanced-table-container {
+    font-size: 11px;
+  }
+
+  .enhanced-validation-table th,
+  .enhanced-validation-table td {
+    padding: 4px 2px;
+  }
+
+  .property-header {
+    min-width: 80px;
+    max-width: 120px;
+  }
+
+  .row-index-cell {
+    min-width: 60px;
   }
 }
