@@ -99,7 +99,7 @@
 .fields-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 200px;
   margin-bottom: 20px;
 }
 
@@ -206,6 +206,10 @@
   border-radius: 8px;
   padding: 16px;
   margin-top: auto;
+  flex: 1;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
 }
 
 .template-preview h3 {
@@ -221,7 +225,7 @@
   border-radius: 6px;
   font-size: 13px;
   line-height: 1.4;
-  max-height: 200px;
+  flex: 1;
   overflow-y: auto;
   margin: 0;
   white-space: pre-wrap;
