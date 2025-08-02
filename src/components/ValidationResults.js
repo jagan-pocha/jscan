@@ -324,13 +324,9 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
               </p>
             </>
           ) : (
-            <>
-              <div className="no-results-icon">→</div>
-              <h4>Ready for Validation</h4>
-              <p>
-                Create a template on the left, add JSON data above, then click a validation button to see results here.
-              </p>
-            </>
+            <div className="empty-state">
+              <p>Click a validation button above to see results</p>
+            </div>
           )}
         </div>
       )}
