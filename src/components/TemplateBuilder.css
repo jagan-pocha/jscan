@@ -154,7 +154,45 @@
 
 .nested-fields {
   padding: 16px;
-  background: #fafbfc;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.nested-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.nested-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.array-item-type-select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+  min-width: 100px;
+}
+
+.array-object-fields {
+  margin-top: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
 }
 
 .nested-field-adder {
