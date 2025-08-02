@@ -82,13 +82,13 @@ const JsonInput = ({ jsonData, setJsonData }) => {
         <h2>📄 JSON Data Input</h2>
         <div className="json-actions">
           <button onClick={formatJson} className="format-btn" disabled={!isValidJson}>
-            🎨 Format
+            Format
           </button>
           <button onClick={loadSampleJson} className="sample-btn">
-            📋 Sample
+            Sample
           </button>
           <button onClick={clearJson} className="clear-btn">
-            🗑️ Clear
+            Clear
           </button>
         </div>
       </div>
