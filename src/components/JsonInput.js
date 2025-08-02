@@ -130,7 +130,7 @@ Example:
 
       {formattedJson && (
         <div className="json-preview">
-          <h3>🔍 Formatted Preview</h3>
+          <h3>Formatted Preview</h3>
           <pre className="formatted-json">{formattedJson}</pre>
         </div>
       )}
