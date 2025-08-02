@@ -40,13 +40,14 @@ const JsonInput = ({ jsonData, setJsonData }) => {
   };
 
   const formatJson = () => {
-    if (isValidJson && jsonData.trim()) {
+    if (isValidJson && jsonData.trim() && parsedData !== null) {
       try {
-        const parsed = JSON.parse(jsonData);
-        const formatted = JSON.stringify(parsed, null, 2);
+        const formatted = JSON.stringify(parsedData, null, 2);
         setJsonData(formatted);
       } catch (error) {
-        // Error already handled in validateAndFormat
+        // Fallback - should not happen but just in case
+        setJsonError('Error formatting JSON: ' + error.message);
+        setIsValidJson(false);
       }
     }
   };
