@@ -4,17 +4,16 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './ValidationResults.css';
 
-const ValidationResults = ({ results, activeValidation, template, jsonData }) => {
+const ValidationResults = ({ results, activeValidation, template, jsonData, parsedJsonData }) => {
   const createDataTable = () => {
-    if (!jsonData || !template || Object.keys(template).length === 0) {
+    if (!parsedJsonData || !template || Object.keys(template).length === 0) {
       return null;
     }
 
     try {
-      const parsedData = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
-      return generateEnhancedTable(parsedData, template, activeValidation);
+      return generateEnhancedTable(parsedJsonData, template, activeValidation);
     } catch (error) {
-      console.error('Error parsing data for enhanced table:', error);
+      console.error('Error creating enhanced table:', error);
       return null;
     }
   };
