@@ -137,10 +137,18 @@ const TemplateBuilder = ({ template, setTemplate }) => {
       </div>
 
       <div className="template-input-container">
-        <textarea
-          value={templateText}
-          onChange={handleTemplateChange}
-          placeholder={`Paste your JSON template here...
+        <div className="textarea-with-lines">
+          <div className="line-numbers">
+            {templateText.split('\n').map((_, index) => (
+              <div key={index} className="line-number">
+                {index + 1}
+              </div>
+            ))}
+          </div>
+          <textarea
+            value={templateText}
+            onChange={handleTemplateChange}
+            placeholder={`Paste your JSON template here...
 
 Example:
 {
@@ -165,8 +173,9 @@ Example:
     }
   }
 }`}
-          className={`template-textarea ${!isValidTemplate ? 'error' : ''}`}
-        />
+            className={`template-textarea ${!isValidTemplate ? 'error' : ''}`}
+          />
+        </div>
       </div>
     </div>
   );
