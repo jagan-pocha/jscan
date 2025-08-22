@@ -87,6 +87,13 @@
   border: 1px solid #fecaca;
 }
 
+.error-location {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #7c2d12;
+  font-style: italic;
+}
+
 .template-valid {
   background: #f0fdf4;
   color: #16a34a;
