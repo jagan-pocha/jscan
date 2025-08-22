@@ -506,6 +506,14 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
           )}
         </div>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalData?.title || 'Nested Table'}
+      >
+        {modalData && renderModalNestedTable(modalData)}
+      </Modal>
     </div>
   );
 };
