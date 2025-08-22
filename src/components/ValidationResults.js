@@ -25,7 +25,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
     const dataArray = Array.isArray(jsonData) ? jsonData : [jsonData];
     const isArrayData = Array.isArray(jsonData);
 
-    // Create table structure
+    // Create table structure with nested tables
     const tableData = dataArray.map((item, index) => {
       const row = {
         rowIndex: isArrayData ? index + 1 : 'Single Object',
@@ -33,6 +33,43 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
           const value = getNestedValue(item, prop);
           const hasValue = value !== undefined && value !== null;
           const expectedType = getExpectedType(template, prop);
+          const actualType = hasValue ? (Array.isArray(value) ? 'array' : typeof value) : 'missing';
+          const templateDef = getTemplateDefinition(template, prop);
+
+          // Check if this is an array of objects that should be displayed as nested table
+          const isNestedTable = hasValue && Array.isArray(value) &&
+                                templateDef?.items?.type === 'object' &&
+                                templateDef?.items?.properties;
+
+          acc[prop] = {
+            value: hasValue ? value : '❌',
+            hasValue,
+            expectedType,
+            actualType,
+            isValid: hasValue && (actualType === expectedType || (expectedType === 'array' && Array.isArray(value))),
+            isNestedTable,
+            nestedTableData: isNestedTable ? createNestedTableData(value, templateDef.items.properties) : null
+          };
+          return acc;
+        }, {})
+      };
+      return row;
+    });
+
+    return { tableData, allProperties, isArrayData };
+  };
+
+  const createNestedTableData = (arrayData, objectTemplate) => {
+    if (!Array.isArray(arrayData) || !objectTemplate) return null;
+
+    const nestedProperties = Object.keys(objectTemplate);
+    const nestedTableData = arrayData.map((item, index) => {
+      const row = {
+        rowIndex: index + 1,
+        ...nestedProperties.reduce((acc, prop) => {
+          const value = item?.[prop];
+          const hasValue = value !== undefined && value !== null;
+          const expectedType = objectTemplate[prop]?.type || 'unknown';
           const actualType = hasValue ? (Array.isArray(value) ? 'array' : typeof value) : 'missing';
 
           acc[prop] = {
@@ -48,7 +85,23 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
       return row;
     });
 
-    return { tableData, allProperties, isArrayData };
+    return { tableData: nestedTableData, properties: nestedProperties };
+  };
+
+  const getTemplateDefinition = (template, path) => {
+    const keys = path.split('.');
+    let current = template;
+
+    for (const key of keys) {
+      if (current[key]) {
+        if (keys.indexOf(key) === keys.length - 1) {
+          return current[key];
+        } else if (current[key].type === 'object' && current[key].properties) {
+          current = current[key].properties;
+        }
+      }
+    }
+    return null;
   };
 
   const getAllProperties = (template) => {
@@ -267,10 +320,55 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                     >
                       {cellData?.hasValue ? (
                         <div className="cell-content">
-                          <span className="cell-value">
-                            {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}
-                          </span>
-                          {!cellData.isValid && <span className="type-mismatch">⚠️</span>}
+                          {cellData.isNestedTable ? (
+                            <div className="nested-table-container">
+                              <div className="nested-table-header">
+                                Array of Objects ({cellData.value.length} items)
+                              </div>
+                              <table className="nested-table">
+                                <thead>
+                                  <tr>
+                                    <th className="nested-index-header">Index</th>
+                                    {cellData.nestedTableData.properties.map(nestedProp => (
+                                      <th key={nestedProp} className="nested-property-header">
+                                        {nestedProp}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {cellData.nestedTableData.tableData.map((nestedRow, nestedIndex) => (
+                                    <tr key={nestedIndex} className="nested-data-row">
+                                      <td className="nested-index-cell">{nestedRow.rowIndex}</td>
+                                      {cellData.nestedTableData.properties.map(nestedProp => {
+                                        const nestedCellData = nestedRow[nestedProp];
+                                        return (
+                                          <td
+                                            key={nestedProp}
+                                            className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'}`}
+                                          >
+                                            {nestedCellData?.hasValue ? (
+                                              <span className="nested-cell-value">
+                                                {typeof nestedCellData.value === 'object' ? JSON.stringify(nestedCellData.value) : String(nestedCellData.value)}
+                                                {!nestedCellData.isValid && <span className="type-mismatch">⚠️</span>}
+                                              </span>
+                                            ) : (
+                                              <span className="missing-indicator">❌</span>
+                                            )}
+                                          </td>
+                                        );
+                                      })}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          ) : (
+                            <span className="cell-value">
+                              {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}
+                            </span>
+                          )}
+                          {!cellData.isValid && !cellData.isNestedTable && <span className="type-mismatch">⚠️</span>}
                         </div>
                       ) : (
                         <span className="missing-indicator">❌</span>
