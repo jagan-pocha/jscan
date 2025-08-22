@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🧩 JSCAN - JSON Validator App
 
 A powerful React application that provides a side-by-side interface for defining JSON templates and validating JSON data against them.
@@ -107,3 +108,12 @@ The app is fully responsive and works on:
 ---
 
 Built with ❤️ for developers who work with JSON data validation.
+=======
+# jscan
+
+This repository was initialized by Builder.io.
+
+## Getting Started
+
+Welcome to your new repository! You can now start building your project.
+>>>>>>> refs/remotes/origin/main
