@@ -68,6 +68,23 @@ const JsonInput = ({ jsonData, setJsonData }) => {
         "zipCode": "10001"
       },
       "hobbies": ["reading", "coding", "gaming"],
+      "skills": [
+        {
+          "name": "JavaScript",
+          "level": 8,
+          "certified": true
+        },
+        {
+          "name": "Python",
+          "level": 7,
+          "certified": false
+        },
+        {
+          "name": "React",
+          "level": 9,
+          "certified": true
+        }
+      ],
       "metadata": {
         "createdAt": "2024-01-01",
         "updatedAt": "2024-01-15"
