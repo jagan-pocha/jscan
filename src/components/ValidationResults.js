@@ -286,6 +286,51 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
 
   const enhancedTableData = createDataTable();
 
+  const hasValidationIssues = () => {
+    if (!activeValidation) return false;
+
+    // Use the results array to determine if there are actual issues
+    if (results && results.length > 0) {
+      switch (activeValidation) {
+        case 'missing':
+          return results.some(r => r.issueType === 'Missing Field');
+        case 'additional':
+          return results.some(r => r.issueType === 'Additional Field');
+        case 'types':
+          return results.some(r => r.issueType === 'Type Mismatch');
+        default:
+          return results.length > 0;
+      }
+    }
+
+    return false;
+  };
+
+  const getNoIssuesMessage = () => {
+    switch (activeValidation) {
+      case 'missing':
+        return {
+          title: 'No Missing Fields',
+          message: 'All template fields are present in the JSON data.'
+        };
+      case 'additional':
+        return {
+          title: 'No Additional Fields',
+          message: 'No additional fields found in the JSON data.'
+        };
+      case 'types':
+        return {
+          title: 'No Type Mismatches',
+          message: 'All data types match the template specification.'
+        };
+      default:
+        return {
+          title: 'No Issues Found',
+          message: 'Validation completed successfully.'
+        };
+    }
+  };
+
   const toggleNestedTable = (rowIndex, prop) => {
     const key = `${rowIndex}-${prop}`;
     const newExpanded = new Set(expandedNested);
@@ -412,8 +457,14 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
         {getResultsSummary()}
       </div>
 
-      {enhancedTableData ? (
+      {enhancedTableData && hasValidationIssues() ? (
         renderEnhancedTable()
+      ) : enhancedTableData && activeValidation ? (
+        <div className="no-issues-found">
+          <div className="no-issues-icon">✓</div>
+          <h4>{getNoIssuesMessage().title}</h4>
+          <p>{getNoIssuesMessage().message}</p>
+        </div>
       ) : parsedJsonData && template && Object.keys(template).length > 0 ? (
         <div className="ag-theme-alpine results-grid">
           <AgGridReact

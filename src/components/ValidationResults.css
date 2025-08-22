@@ -127,6 +127,38 @@
   padding: 20px;
 }
 
+.no-issues-found {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: #16a34a;
+}
+
+.no-issues-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.no-issues-found h4 {
+  margin: 0 0 12px 0;
+  color: #16a34a;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.no-issues-found p {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 400px;
+  color: #059669;
+}
+
 .no-results h4 {
   margin: 0 0 12px 0;
   color: #374151;
