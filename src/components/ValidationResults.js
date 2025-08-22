@@ -5,6 +5,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './ValidationResults.css';
 
 const ValidationResults = ({ results, activeValidation, template, jsonData, parsedJsonData }) => {
+  const [expandedNested, setExpandedNested] = React.useState(new Set());
   const createDataTable = () => {
     if (!parsedJsonData || !template || Object.keys(template).length === 0) {
       return null;
@@ -285,6 +286,17 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
 
   const enhancedTableData = createDataTable();
 
+  const toggleNestedTable = (rowIndex, prop) => {
+    const key = `${rowIndex}-${prop}`;
+    const newExpanded = new Set(expandedNested);
+    if (newExpanded.has(key)) {
+      newExpanded.delete(key);
+    } else {
+      newExpanded.add(key);
+    }
+    setExpandedNested(newExpanded);
+  };
+
   const renderEnhancedTable = () => {
     if (!enhancedTableData) return null;
 
@@ -322,46 +334,54 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                         <div className="cell-content">
                           {cellData.isNestedTable ? (
                             <div className="nested-table-container">
-                              <div className="nested-table-header">
+                              <div
+                                className="nested-table-header clickable"
+                                onClick={() => toggleNestedTable(index, prop)}
+                              >
+                                <span className="expand-icon">
+                                  {expandedNested.has(`${index}-${prop}`) ? '▼' : '▶'}
+                                </span>
                                 Array of Objects ({cellData.value.length} items)
                               </div>
-                              <table className="nested-table">
-                                <thead>
-                                  <tr>
-                                    <th className="nested-index-header">Index</th>
-                                    {cellData.nestedTableData.properties.map(nestedProp => (
-                                      <th key={nestedProp} className="nested-property-header">
-                                        {nestedProp}
-                                      </th>
-                                    ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {cellData.nestedTableData.tableData.map((nestedRow, nestedIndex) => (
-                                    <tr key={nestedIndex} className="nested-data-row">
-                                      <td className="nested-index-cell">{nestedRow.rowIndex}</td>
-                                      {cellData.nestedTableData.properties.map(nestedProp => {
-                                        const nestedCellData = nestedRow[nestedProp];
-                                        return (
-                                          <td
-                                            key={nestedProp}
-                                            className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'}`}
-                                          >
-                                            {nestedCellData?.hasValue ? (
-                                              <span className="nested-cell-value">
-                                                {typeof nestedCellData.value === 'object' ? JSON.stringify(nestedCellData.value) : String(nestedCellData.value)}
-                                                {!nestedCellData.isValid && <span className="type-mismatch">⚠️</span>}
-                                              </span>
-                                            ) : (
-                                              <span className="missing-indicator">❌</span>
-                                            )}
-                                          </td>
-                                        );
-                                      })}
+                              {expandedNested.has(`${index}-${prop}`) && (
+                                <table className="nested-table">
+                                  <thead>
+                                    <tr>
+                                      <th className="nested-index-header">Index</th>
+                                      {cellData.nestedTableData.properties.map(nestedProp => (
+                                        <th key={nestedProp} className="nested-property-header">
+                                          {nestedProp}
+                                        </th>
+                                      ))}
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
+                                  </thead>
+                                  <tbody>
+                                    {cellData.nestedTableData.tableData.map((nestedRow, nestedIndex) => (
+                                      <tr key={nestedIndex} className="nested-data-row">
+                                        <td className="nested-index-cell">{nestedRow.rowIndex}</td>
+                                        {cellData.nestedTableData.properties.map(nestedProp => {
+                                          const nestedCellData = nestedRow[nestedProp];
+                                          return (
+                                            <td
+                                              key={nestedProp}
+                                              className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'}`}
+                                            >
+                                              {nestedCellData?.hasValue ? (
+                                                <span className="nested-cell-value">
+                                                  {typeof nestedCellData.value === 'object' ? JSON.stringify(nestedCellData.value) : String(nestedCellData.value)}
+                                                  {!nestedCellData.isValid && <span className="type-mismatch">⚠️</span>}
+                                                </span>
+                                              ) : (
+                                                <span className="missing-indicator">❌</span>
+                                              )}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              )}
                             </div>
                           ) : (
                             <span className="cell-value">
