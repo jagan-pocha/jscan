@@ -1,31 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TemplateBuilder.css';
 
 const TemplateBuilder = ({ template, setTemplate }) => {
-  const [newFieldName, setNewFieldName] = useState('');
-  const [newFieldType, setNewFieldType] = useState('string');
+  const [templateText, setTemplateText] = useState('');
+  const [isValidTemplate, setIsValidTemplate] = useState(true);
+  const [templateError, setTemplateError] = useState('');
 
-  const addField = () => {
-    if (newFieldName.trim()) {
-      const newTemplate = { ...template };
-
-      if (newFieldType === 'object') {
-        newTemplate[newFieldName] = {
-          type: 'object',
-          properties: {}
-        };
-      } else if (newFieldType === 'array') {
-        newTemplate[newFieldName] = {
-          type: 'array',
-          items: { type: 'string' }
-        };
-      } else {
-        newTemplate[newFieldName] = { type: newFieldType };
-      }
-
-      setTemplate(newTemplate);
-      setNewFieldName('');
+  useEffect(() => {
+    if (template && Object.keys(template).length > 0) {
+      setTemplateText(JSON.stringify(template, null, 2));
     }
+  }, [template]);
+
+  const validateAndUpdateTemplate = (input) => {
+    if (!input.trim()) {
+      setIsValidTemplate(true);
+      setTemplateError('');
+      setTemplate({});
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(input);
+      setIsValidTemplate(true);
+      setTemplateError('');
+      setTemplate(parsed);
+    } catch (error) {
+      setIsValidTemplate(false);
+      setTemplateError(error.message);
+    }
+  };
+
+  const handleTemplateChange = (e) => {
+    const value = e.target.value;
+    setTemplateText(value);
+    validateAndUpdateTemplate(value);
   };
 
   const loadSampleTemplate = () => {
@@ -65,11 +74,30 @@ const TemplateBuilder = ({ template, setTemplate }) => {
         }
       }
     };
+    const templateStr = JSON.stringify(sampleTemplate, null, 2);
+    setTemplateText(templateStr);
     setTemplate(sampleTemplate);
+    setIsValidTemplate(true);
+    setTemplateError('');
   };
 
   const clearTemplate = () => {
+    setTemplateText('');
     setTemplate({});
+    setIsValidTemplate(true);
+    setTemplateError('');
+  };
+
+  const formatTemplate = () => {
+    if (isValidTemplate && templateText.trim()) {
+      try {
+        const parsed = JSON.parse(templateText);
+        const formatted = JSON.stringify(parsed, null, 2);
+        setTemplateText(formatted);
+      } catch (error) {
+        // Error already handled in validateAndUpdateTemplate
+      }
+    }
   };
 
   const updateArrayItemType = (arrayPath, itemType) => {
