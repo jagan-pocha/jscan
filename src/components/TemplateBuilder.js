@@ -122,6 +122,11 @@ const TemplateBuilder = ({ template, setTemplate }) => {
         {!isValidTemplate && (
           <div className="template-error">
             <strong>Template Error:</strong> {templateError}
+            {templateError.includes('line') && templateError.includes('column') && (
+              <div className="error-location">
+                💡 Look at the line numbers on the left to find the error location
+              </div>
+            )}
           </div>
         )}
         {isValidTemplate && templateText.trim() && (
