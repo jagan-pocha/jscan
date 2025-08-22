@@ -228,7 +228,7 @@
 }
 
 .property-cell.has-value {
-  background: #f0fdf4;
+  background: white;
 }
 
 .property-cell.missing-value {
@@ -237,12 +237,46 @@
 }
 
 .property-cell.valid-type {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid #e5e7eb;
+  background: white;
 }
 
 .property-cell.invalid-type.has-value {
   border-left: 3px solid #ef4444;
   background: #fff7ed;
+}
+
+/* Missing Fields Validation - Red Theme */
+.property-cell.validation-missing.missing-value {
+  background: #fef2f2;
+  border-left: 3px solid #ef4444;
+}
+
+.property-cell.validation-missing.has-value.valid-type {
+  background: white;
+  border-left: 3px solid #e5e7eb;
+}
+
+/* Additional Fields Validation - Green Theme */
+.property-cell.validation-additional.has-value {
+  background: #f0fdf4;
+  border-left: 3px solid #10b981;
+}
+
+.property-cell.validation-additional.missing-value {
+  background: white;
+  border-left: 3px solid #e5e7eb;
+}
+
+/* Data Types Validation - Orange Theme */
+.property-cell.validation-types.invalid-type.has-value {
+  background: #fff7ed;
+  border-left: 3px solid #f59e0b;
+}
+
+.property-cell.validation-types.valid-type.has-value {
+  background: white;
+  border-left: 3px solid #e5e7eb;
 }
 
 .cell-content {
@@ -260,12 +294,14 @@
 
 .missing-indicator {
   font-size: 16px;
-  color: #dc2626;
+  color: #ef4444;
+  font-weight: bold;
 }
 
 .type-mismatch {
   font-size: 14px;
-  color: #ea580c;
+  color: #f59e0b;
+  font-weight: bold;
 }
 
 .data-row:hover {
@@ -366,7 +402,7 @@
 }
 
 .nested-property-cell.has-value {
-  background: #f0fdf4;
+  background: white;
 }
 
 .nested-property-cell.missing-value {
@@ -375,12 +411,43 @@
 }
 
 .nested-property-cell.valid-type {
-  border-left: 2px solid #10b981;
+  border-left: 2px solid #e5e7eb;
 }
 
 .nested-property-cell.invalid-type.has-value {
   border-left: 2px solid #ef4444;
   background: #fff7ed;
+}
+
+/* Nested cells validation-specific colors */
+.nested-property-cell.validation-missing.missing-value {
+  background: #fef2f2;
+  border-left: 2px solid #ef4444;
+}
+
+.nested-property-cell.validation-missing.has-value.valid-type {
+  background: white;
+  border-left: 2px solid #e5e7eb;
+}
+
+.nested-property-cell.validation-additional.has-value {
+  background: #f0fdf4;
+  border-left: 2px solid #10b981;
+}
+
+.nested-property-cell.validation-additional.missing-value {
+  background: white;
+  border-left: 2px solid #e5e7eb;
+}
+
+.nested-property-cell.validation-types.invalid-type.has-value {
+  background: #fff7ed;
+  border-left: 2px solid #f59e0b;
+}
+
+.nested-property-cell.validation-types.valid-type.has-value {
+  background: white;
+  border-left: 2px solid #e5e7eb;
 }
 
 .nested-cell-value {

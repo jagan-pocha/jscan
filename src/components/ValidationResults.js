@@ -327,7 +327,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                   return (
                     <td
                       key={prop}
-                      className={`property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'}`}
+                      className={`property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'} validation-${activeValidation}`}
                       title={cellData ? `Expected: ${cellData.expectedType}, Actual: ${cellData.actualType}` : ''}
                     >
                       {cellData?.hasValue ? (
@@ -364,7 +364,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                                           return (
                                             <td
                                               key={nestedProp}
-                                              className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'}`}
+                                              className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'} validation-${activeValidation}`}
                                             >
                                               {nestedCellData?.hasValue ? (
                                                 <span className="nested-cell-value">
