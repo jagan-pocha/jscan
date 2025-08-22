@@ -2,10 +2,13 @@ import React, { useMemo } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import Modal from './Modal';
 import './ValidationResults.css';
 
 const ValidationResults = ({ results, activeValidation, template, jsonData, parsedJsonData }) => {
   const [expandedNested, setExpandedNested] = React.useState(new Set());
+  const [modalData, setModalData] = React.useState(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const createDataTable = () => {
     if (!parsedJsonData || !template || Object.keys(template).length === 0) {
       return null;
@@ -331,15 +334,63 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
     }
   };
 
-  const toggleNestedTable = (rowIndex, prop) => {
-    const key = `${rowIndex}-${prop}`;
-    const newExpanded = new Set(expandedNested);
-    if (newExpanded.has(key)) {
-      newExpanded.delete(key);
-    } else {
-      newExpanded.add(key);
-    }
-    setExpandedNested(newExpanded);
+  const openNestedTableModal = (nestedTableData, arrayName, arrayLength) => {
+    setModalData({
+      tableData: nestedTableData.tableData,
+      properties: nestedTableData.properties,
+      title: `${arrayName} - Array of Objects (${arrayLength} items)`,
+      activeValidation
+    });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
+
+  const renderModalNestedTable = (data) => {
+    if (!data) return null;
+
+    return (
+      <table className="modal-nested-table">
+        <thead>
+          <tr>
+            <th className="modal-nested-index-header">Index</th>
+            {data.properties.map(prop => (
+              <th key={prop} className="modal-nested-property-header">
+                {prop}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.tableData.map((row, index) => (
+            <tr key={index}>
+              <td className="modal-nested-index-cell">{row.rowIndex}</td>
+              {data.properties.map(prop => {
+                const cellData = row[prop];
+                return (
+                  <td
+                    key={prop}
+                    className={`modal-nested-property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'} validation-${data.activeValidation}`}
+                  >
+                    {cellData?.hasValue ? (
+                      <span className="modal-nested-cell-value">
+                        {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}
+                        {!cellData.isValid && <span className="type-mismatch"> ⚠️</span>}
+                      </span>
+                    ) : (
+                      <span className="missing-indicator">❌</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   };
 
   const renderEnhancedTable = () => {
@@ -378,56 +429,12 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                       {cellData?.hasValue ? (
                         <div className="cell-content">
                           {cellData.isNestedTable ? (
-                            <div className="nested-table-container">
-                              <div
-                                className="nested-table-header clickable"
-                                onClick={() => toggleNestedTable(index, prop)}
-                              >
-                                <span className="expand-icon">
-                                  {expandedNested.has(`${index}-${prop}`) ? '▼' : '▶'}
-                                </span>
-                                Array of Objects ({cellData.value.length} items)
-                              </div>
-                              {expandedNested.has(`${index}-${prop}`) && (
-                                <table className="nested-table">
-                                  <thead>
-                                    <tr>
-                                      <th className="nested-index-header">Index</th>
-                                      {cellData.nestedTableData.properties.map(nestedProp => (
-                                        <th key={nestedProp} className="nested-property-header">
-                                          {nestedProp}
-                                        </th>
-                                      ))}
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {cellData.nestedTableData.tableData.map((nestedRow, nestedIndex) => (
-                                      <tr key={nestedIndex} className="nested-data-row">
-                                        <td className="nested-index-cell">{nestedRow.rowIndex}</td>
-                                        {cellData.nestedTableData.properties.map(nestedProp => {
-                                          const nestedCellData = nestedRow[nestedProp];
-                                          return (
-                                            <td
-                                              key={nestedProp}
-                                              className={`nested-property-cell ${nestedCellData?.hasValue ? 'has-value' : 'missing-value'} ${nestedCellData?.isValid ? 'valid-type' : 'invalid-type'} validation-${activeValidation}`}
-                                            >
-                                              {nestedCellData?.hasValue ? (
-                                                <span className="nested-cell-value">
-                                                  {typeof nestedCellData.value === 'object' ? JSON.stringify(nestedCellData.value) : String(nestedCellData.value)}
-                                                  {!nestedCellData.isValid && <span className="type-mismatch">⚠️</span>}
-                                                </span>
-                                              ) : (
-                                                <span className="missing-indicator">❌</span>
-                                              )}
-                                            </td>
-                                          );
-                                        })}
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              )}
-                            </div>
+                            <button
+                              className="nested-table-button"
+                              onClick={() => openNestedTableModal(cellData.nestedTableData, prop, cellData.value.length)}
+                            >
+                              📋 View {cellData.value.length} items
+                            </button>
                           ) : (
                             <span className="cell-value">
                               {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}

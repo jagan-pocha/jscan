@@ -344,6 +344,30 @@
   background: #dbeafe;
 }
 
+/* Nested Table Button */
+.nested-table-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.nested-table-button:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
 /* Nested Table Styles */
 .nested-table-container {
   width: 100%;
