@@ -100,220 +100,15 @@ const TemplateBuilder = ({ template, setTemplate }) => {
     }
   };
 
-  const updateArrayItemType = (arrayPath, itemType) => {
-    const newTemplate = { ...template };
-    const pathParts = arrayPath.split('.');
-    const fieldName = pathParts.pop();
-
-    // Navigate to parent object
-    let current = newTemplate;
-    for (const part of pathParts) {
-      if (current[part] && current[part].type === 'object') {
-        current = current[part].properties;
-      }
-    }
-
-    // Update array item type
-    if (current[fieldName] && current[fieldName].type === 'array') {
-      if (itemType === 'object') {
-        current[fieldName].items = {
-          type: 'object',
-          properties: {}
-        };
-      } else {
-        current[fieldName].items = { type: itemType };
-      }
-    }
-
-    setTemplate(newTemplate);
-  };
-
-  const removeField = (fieldPath) => {
-    const newTemplate = { ...template };
-    const pathParts = fieldPath.split('.');
-    const fieldName = pathParts.pop();
-
-    // Navigate to parent object
-    let current = newTemplate;
-    for (const part of pathParts) {
-      if (part === 'items' && current.type === 'array') {
-        if (!current.items) {
-          current.items = { type: 'object', properties: {} };
-        }
-        if (!current.items.properties) {
-          current.items.properties = {};
-        }
-        current = current.items.properties;
-      } else if (current[part] && current[part].type === 'object') {
-        current = current[part].properties;
-      }
-    }
-
-    // Remove the field
-    delete current[fieldName];
-    setTemplate(newTemplate);
-  };
-
-  const updateFieldType = (fieldPath, newType) => {
-    const newTemplate = { ...template };
-    const pathParts = fieldPath.split('.');
-    const fieldName = pathParts.pop();
-
-    // Navigate to parent object
-    let current = newTemplate;
-    for (const part of pathParts) {
-      if (part === 'items' && current.type === 'array') {
-        if (!current.items) {
-          current.items = { type: 'object', properties: {} };
-        }
-        if (!current.items.properties) {
-          current.items.properties = {};
-        }
-        current = current.items.properties;
-      } else if (current[part] && current[part].type === 'object') {
-        current = current[part].properties;
-      }
-    }
-
-    // Update the field type
-    if (newType === 'object') {
-      current[fieldName] = {
-        type: 'object',
-        properties: {}
-      };
-    } else if (newType === 'array') {
-      current[fieldName] = {
-        type: 'array',
-        items: { type: 'string' }
-      };
-    } else {
-      current[fieldName] = { type: newType };
-    }
-    setTemplate(newTemplate);
-  };
-
-  const addNestedField = (parentPath, childName, childType) => {
-    if (childName.trim()) {
-      const newTemplate = { ...template };
-
-      // Navigate to the correct nested object
-      const pathParts = parentPath.split('.');
-      let current = newTemplate;
-
-      for (const part of pathParts) {
-        if (!current[part]) return; // Path doesn't exist
-
-        if (part === 'items' && current.type === 'array') {
-          // Handle array items
-          if (!current.items) {
-            current.items = { type: 'object', properties: {} };
-          }
-          if (!current.items.properties) {
-            current.items.properties = {};
-          }
-          current = current.items.properties;
-        } else if (current[part] && current[part].type === 'object') {
-          if (!current[part].properties) {
-            current[part].properties = {};
-          }
-          current = current[part].properties;
-        } else {
-          return; // Not an object type
-        }
-      }
-
-      // Add the new field
-      if (childType === 'object') {
-        current[childName] = {
-          type: 'object',
-          properties: {}
-        };
-      } else {
-        current[childName] = { type: childType };
-      }
-
-      setTemplate(newTemplate);
-    }
-  };
-
-  const renderField = (fieldName, fieldConfig, level = 0, parentPath = '') => {
-    const currentPath = parentPath ? `${parentPath}.${fieldName}` : fieldName;
-    
-    return (
-      <div key={currentPath} className={`field-item level-${level}`}>
-        <div className="field-header">
-          <span className="field-name">{fieldName}</span>
-          <select
-            value={fieldConfig.type}
-            onChange={(e) => updateFieldType(currentPath, e.target.value)}
-            className="field-type-select"
-          >
-            <option value="string">String</option>
-            <option value="number">Number</option>
-            <option value="boolean">Boolean</option>
-            <option value="object">Object</option>
-            <option value="array">Array</option>
-          </select>
-          <button
-            onClick={() => removeField(currentPath)}
-            className="remove-btn"
-          >
-            ✕
-          </button>
-        </div>
-        
-        {fieldConfig.type === 'object' && (
-          <div className="nested-fields">
-            <div className="nested-header">
-              <span className="nested-title">Object Properties:</span>
-            </div>
-            {fieldConfig.properties && Object.keys(fieldConfig.properties).map(nestedField =>
-              renderField(nestedField, fieldConfig.properties[nestedField], level + 1, currentPath)
-            )}
-            <NestedFieldAdder
-              onAdd={(name, type) => addNestedField(currentPath, name, type)}
-            />
-          </div>
-        )}
-
-        {fieldConfig.type === 'array' && (
-          <div className="nested-fields">
-            <div className="nested-header">
-              <span className="nested-title">Array Item Type:</span>
-              <select
-                value={fieldConfig.items?.type || 'string'}
-                onChange={(e) => updateArrayItemType(currentPath, e.target.value)}
-                className="array-item-type-select"
-              >
-                <option value="string">String</option>
-                <option value="number">Number</option>
-                <option value="boolean">Boolean</option>
-                <option value="object">Object</option>
-              </select>
-            </div>
-
-            {fieldConfig.items?.type === 'object' && (
-              <div className="array-object-fields">
-                <div className="nested-title">Object Structure in Array:</div>
-                {fieldConfig.items.properties && Object.keys(fieldConfig.items.properties).map(nestedField =>
-                  renderField(nestedField, fieldConfig.items.properties[nestedField], level + 1, `${currentPath}.items`)
-                )}
-                <NestedFieldAdder
-                  onAdd={(name, type) => addNestedField(`${currentPath}.items`, name, type)}
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
 
   return (
     <div className="template-builder">
       <div className="template-header">
-        <h2>Template Builder</h2>
+        <h2>Template Definition</h2>
         <div className="template-actions">
+          <button onClick={formatTemplate} className="format-template-btn" disabled={!isValidTemplate}>
+            Format
+          </button>
           <button onClick={loadSampleTemplate} className="sample-template-btn">
             Sample
           </button>
@@ -322,84 +117,57 @@ const TemplateBuilder = ({ template, setTemplate }) => {
           </button>
         </div>
       </div>
-      
-      <div className="add-field-section">
-        <div className="add-field-form">
-          <input
-            type="text"
-            placeholder="Field name"
-            value={newFieldName}
-            onChange={(e) => setNewFieldName(e.target.value)}
-            className="field-name-input"
-            onKeyPress={(e) => e.key === 'Enter' && addField()}
-          />
-          <select
-            value={newFieldType}
-            onChange={(e) => setNewFieldType(e.target.value)}
-            className="field-type-select"
-          >
-            <option value="string">String</option>
-            <option value="number">Number</option>
-            <option value="boolean">Boolean</option>
-            <option value="object">Object</option>
-            <option value="array">Array</option>
-          </select>
-          <button onClick={addField} className="add-btn">
-            + Add Field
-          </button>
-        </div>
-      </div>
 
-      <div className="fields-list">
-        {Object.keys(template).map(fieldName =>
-          renderField(fieldName, template[fieldName])
+      <div className="template-status">
+        {!isValidTemplate && (
+          <div className="template-error">
+            <strong>Template Error:</strong> {templateError}
+          </div>
+        )}
+        {isValidTemplate && templateText.trim() && (
+          <div className="template-valid">
+            <strong>Valid Template</strong> ({Object.keys(template).length} properties)
+          </div>
+        )}
+        {!templateText.trim() && (
+          <div className="template-empty">
+            Paste your JSON template structure here
+          </div>
         )}
       </div>
 
-      <div className="template-preview">
-        <h3>Current Template</h3>
-        <pre className="json-preview">
-          {JSON.stringify(template, null, 2)}
-        </pre>
-      </div>
-    </div>
-  );
-};
+      <div className="template-input-container">
+        <textarea
+          value={templateText}
+          onChange={handleTemplateChange}
+          placeholder={`Paste your JSON template here...
 
-const NestedFieldAdder = ({ onAdd }) => {
-  const [name, setName] = useState('');
-  const [type, setType] = useState('string');
-
-  const handleAdd = () => {
-    if (name.trim()) {
-      onAdd(name, type);
-      setName('');
+Example:
+{
+  "name": { "type": "string" },
+  "age": { "type": "number" },
+  "isActive": { "type": "boolean" },
+  "address": {
+    "type": "object",
+    "properties": {
+      "street": { "type": "string" },
+      "city": { "type": "string" }
     }
-  };
-
-  return (
-    <div className="nested-field-adder">
-      <input
-        type="text"
-        placeholder="Nested field name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="nested-field-input"
-        onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
-      />
-      <select
-        value={type}
-        onChange={(e) => setType(e.target.value)}
-        className="nested-field-type"
-      >
-        <option value="string">String</option>
-        <option value="number">Number</option>
-        <option value="boolean">Boolean</option>
-        <option value="object">Object</option>
-      </select>
-      <button onClick={handleAdd} className="nested-add-btn">
-        +
-      </button>
+  },
+  "skills": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "level": { "type": "number" }
+      }
+    }
+  }
+}`}
+          className={`template-textarea ${!isValidTemplate ? 'error' : ''}`}
+        />
+      </div>
     </div>
   );
 };
