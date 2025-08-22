@@ -273,6 +273,111 @@
   background: #dbeafe;
 }
 
+/* Nested Table Styles */
+.nested-table-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.nested-table-header {
+  background: #1f2937;
+  color: white;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 4px 4px 0 0;
+}
+
+.nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0 0 4px 4px;
+  overflow: hidden;
+}
+
+.nested-table th {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 4px 6px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 10px;
+}
+
+.nested-index-header {
+  background: #6366f1 !important;
+  color: white !important;
+  text-align: center !important;
+  min-width: 40px;
+}
+
+.nested-property-header {
+  min-width: 60px;
+  max-width: 80px;
+  word-wrap: break-word;
+}
+
+.nested-table td {
+  border: 1px solid #e5e7eb;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+.nested-index-cell {
+  background: #eef2ff;
+  font-weight: 600;
+  text-align: center;
+  color: #4f46e5;
+  min-width: 40px;
+  font-size: 10px;
+}
+
+.nested-property-cell {
+  position: relative;
+  max-width: 80px;
+  word-wrap: break-word;
+  font-size: 10px;
+}
+
+.nested-property-cell.has-value {
+  background: #f0fdf4;
+}
+
+.nested-property-cell.missing-value {
+  background: #fef2f2;
+  text-align: center;
+}
+
+.nested-property-cell.valid-type {
+  border-left: 2px solid #10b981;
+}
+
+.nested-property-cell.invalid-type.has-value {
+  border-left: 2px solid #ef4444;
+  background: #fff7ed;
+}
+
+.nested-cell-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70px;
+}
+
+.nested-data-row:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.nested-data-row:hover .nested-index-cell {
+  background: #e0e7ff;
+}
+
 /* Responsive table */
 @media (max-width: 1024px) {
   .enhanced-table-container {
