@@ -126,7 +126,7 @@ const TemplateBuilder = ({ template, setTemplate }) => {
         )}
         {isValidTemplate && templateText.trim() && (
           <div className="template-valid">
-            <strong>Valid Template</strong> ({Object.keys(template).length} properties)
+            <strong>Valid Template</strong>
           </div>
         )}
         {!templateText.trim() && (

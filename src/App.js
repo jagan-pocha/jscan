@@ -36,19 +36,19 @@ function App() {
 
   const performValidation = (template, data, type) => {
     const results = [];
-    
-    if (type === 'missing' || type === 'all') {
+
+    if (type === 'missing') {
       findMissingFields(template, data, results, '');
-    }
-    
-    if (type === 'additional' || type === 'all') {
+    } else if (type === 'additional') {
       findAdditionalFields(template, data, results, '');
-    }
-    
-    if (type === 'types' || type === 'all') {
+    } else if (type === 'types') {
+      checkDataTypes(template, data, results, '');
+    } else if (type === 'all') {
+      findMissingFields(template, data, results, '');
+      findAdditionalFields(template, data, results, '');
       checkDataTypes(template, data, results, '');
     }
-    
+
     return results;
   };
 

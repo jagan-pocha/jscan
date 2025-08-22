@@ -118,7 +118,7 @@ const JsonInput = ({ jsonData, setJsonData }) => {
         )}
         {isValidJson && jsonData.trim() && parsedData !== null && (
           <div className="json-valid">
-            <strong>Valid JSON</strong> ({JSON.stringify(parsedData).length} characters)
+            <strong>Valid JSON</strong>
           </div>
         )}
         {!jsonData.trim() && (
