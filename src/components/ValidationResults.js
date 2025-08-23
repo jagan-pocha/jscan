@@ -23,7 +23,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
   };
 
   const generateEnhancedTable = (jsonData, template, validationType) => {
-    const allProperties = getAllProperties(template);
+    const allProperties = getAllProperties(template, jsonData, validationType);
 
     // Check if jsonData is an array of objects or single object
     const dataArray = Array.isArray(jsonData) ? jsonData : [jsonData];
@@ -108,14 +108,14 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
     return null;
   };
 
-  const getAllProperties = (template) => {
+  const getAllProperties = (template, jsonData = null, validationType = null) => {
     const props = new Set();
 
-    const traverse = (obj, prefix = '') => {
+    const traverseTemplate = (obj, prefix = '') => {
       Object.keys(obj).forEach(key => {
         if (obj[key] && typeof obj[key] === 'object') {
           if (obj[key].type === 'object' && obj[key].properties) {
-            traverse(obj[key].properties, prefix ? `${prefix}.${key}` : key);
+            traverseTemplate(obj[key].properties, prefix ? `${prefix}.${key}` : key);
           } else if (obj[key].type && obj[key].type !== 'object') {
             props.add(prefix ? `${prefix}.${key}` : key);
           }
@@ -125,7 +125,31 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
       });
     };
 
-    traverse(template);
+    const traverseJsonData = (obj, prefix = '') => {
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+
+      Object.keys(obj).forEach(key => {
+        const currentPath = prefix ? `${prefix}.${key}` : key;
+        if (typeof obj[key] === 'object' && !Array.isArray(obj[key]) && obj[key] !== null) {
+          traverseJsonData(obj[key], currentPath);
+        } else {
+          props.add(currentPath);
+        }
+      });
+    };
+
+    // Always traverse template
+    traverseTemplate(template);
+
+    // For additional fields validation, also traverse JSON data to find extra properties
+    if (validationType === 'additional' && jsonData) {
+      if (Array.isArray(jsonData)) {
+        jsonData.forEach(item => traverseJsonData(item));
+      } else {
+        traverseJsonData(jsonData);
+      }
+    }
+
     return Array.from(props);
   };
 
@@ -162,7 +186,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
       minWidth: 200,
       cellRenderer: (params) => (
         <span className="field-name-cell">
-          📋 {params.value}
+          ��� {params.value}
         </span>
       )
     },
