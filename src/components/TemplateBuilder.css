@@ -1,0 +1,174 @@
+.template-builder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.template-header h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+}
+
+.template-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sample-template-btn, .clear-template-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.format-template-btn, .sample-template-btn, .clear-template-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.format-template-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.format-template-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.format-template-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.sample-template-btn {
+  background: #10b981;
+  color: white;
+}
+
+.sample-template-btn:hover {
+  background: #059669;
+}
+
+.clear-template-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.clear-template-btn:hover {
+  background: #dc2626;
+}
+
+.template-status {
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.template-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.error-location {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #7c2d12;
+  font-style: italic;
+}
+
+.template-valid {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.template-empty {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.template-input-container {
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.textarea-with-lines {
+  display: flex;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 100%;
+  min-height: 300px;
+}
+
+.textarea-with-lines:focus-within {
+  border-color: #3b82f6;
+}
+
+.textarea-with-lines.error {
+  border-color: #ef4444;
+}
+
+.line-numbers {
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  padding: 16px 8px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+  text-align: right;
+  user-select: none;
+  min-width: 40px;
+  overflow: hidden;
+}
+
+.line-number {
+  height: 19.5px; /* Match line height of textarea */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.template-textarea {
+  flex: 1;
+  height: 100%;
+  min-height: 300px;
+  padding: 16px;
+  border: none;
+  border-radius: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  background: white;
+}
+
+.template-textarea.error {
+  background: #fef2f2;
+}
+
+.template-textarea::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
