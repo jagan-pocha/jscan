@@ -46,7 +46,13 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                                 templateDef?.items?.properties;
 
           // Check if this field is actually an additional field (exists in JSON but not in template)
-          const isActuallyAdditional = validationType === 'additional' && !getNestedValue(template, prop);
+          const isActuallyAdditional = validationType === 'additional' && !isFieldInTemplate(template, prop);
+
+          // Check if this field is actually missing (exists in template but not in JSON)
+          const isActuallyMissing = validationType === 'missing' && !hasValue && isFieldInTemplate(template, prop);
+
+          // Check if this field has a type mismatch
+          const hasTypeMismatch = validationType === 'types' && hasValue && !isValid;
 
           acc[prop] = {
             value: hasValue ? value : '❌',
@@ -56,7 +62,9 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
             isValid: hasValue && (actualType === expectedType || (expectedType === 'array' && Array.isArray(value))),
             isNestedTable,
             nestedTableData: isNestedTable ? createNestedTableData(value, templateDef.items.properties) : null,
-            isActuallyAdditional
+            isActuallyAdditional,
+            isActuallyMissing,
+            hasTypeMismatch
           };
           return acc;
         }, {})
@@ -110,6 +118,25 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
       }
     }
     return null;
+  };
+
+  const isFieldInTemplate = (template, path) => {
+    const keys = path.split('.');
+    let current = template;
+
+    for (const key of keys) {
+      if (!current[key]) {
+        return false;
+      }
+      if (keys.indexOf(key) === keys.length - 1) {
+        return true; // Found the final key
+      } else if (current[key].type === 'object' && current[key].properties) {
+        current = current[key].properties;
+      } else {
+        return false; // Path doesn't continue as expected
+      }
+    }
+    return false;
   };
 
   const getAllProperties = (template, jsonData = null, validationType = null) => {
@@ -456,7 +483,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                     >
                       {cellData?.hasValue ? (
                         <div className="cell-content">
-                          {cellData?.isActuallyAdditional && activeValidation === 'additional' && (
+                          {cellData?.isActuallyAdditional && (
                             <span className="additional-field-icon">➕</span>
                           )}
                           {cellData.isNestedTable ? (
@@ -471,14 +498,21 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                               {typeof cellData.value === 'object' ? JSON.stringify(cellData.value) : String(cellData.value)}
                             </span>
                           )}
-                          {!cellData.isValid && !cellData.isNestedTable && <span className="type-mismatch">⚠️</span>}
+                          {cellData?.hasTypeMismatch && (
+                            <span className="type-mismatch">⚠️</span>
+                          )}
                         </div>
                       ) : (
                         <div className="missing-cell-content">
-                          {cellData?.isActuallyAdditional && activeValidation === 'additional' && (
+                          {cellData?.isActuallyAdditional && (
                             <span className="additional-field-icon">➕</span>
                           )}
-                          <span className="missing-indicator">❌</span>
+                          {cellData?.isActuallyMissing && (
+                            <span className="missing-indicator">❌</span>
+                          )}
+                          {!cellData?.isActuallyAdditional && !cellData?.isActuallyMissing && (
+                            <span className="missing-indicator">❌</span>
+                          )}
                         </div>
                       )}
                     </td>
