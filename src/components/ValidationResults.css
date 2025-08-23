@@ -264,7 +264,7 @@
 }
 
 .property-cell.missing-value {
-  background: #fef2f2;
+  background: white;
   text-align: center;
 }
 
@@ -274,28 +274,23 @@
 }
 
 .property-cell.invalid-type.has-value {
-  border-left: 3px solid #ef4444;
-  background: #fff7ed;
+  border-left: 3px solid #e5e7eb;
+  background: white;
 }
 
-/* Missing Fields Validation - Red Theme */
+/* Missing Fields Validation - Red for Missing Only */
 .property-cell.validation-missing.missing-value {
-  background: #fef2f2;
-  border-left: 3px solid #ef4444;
-}
-
-.property-cell.validation-missing.has-value.valid-type {
   background: white;
   border-left: 3px solid #e5e7eb;
 }
 
-/* Additional Fields Validation - Green Theme */
-.property-cell.validation-additional.actually-additional.has-value {
-  background: #f0fdf4;
-  border-left: 3px solid #10b981;
+.property-cell.validation-missing.has-value {
+  background: white;
+  border-left: 3px solid #e5e7eb;
 }
 
-.property-cell.validation-additional.has-value:not(.actually-additional) {
+/* Additional Fields Validation - White with Icons Only */
+.property-cell.validation-additional.has-value {
   background: white;
   border-left: 3px solid #e5e7eb;
 }
@@ -305,10 +300,10 @@
   border-left: 3px solid #e5e7eb;
 }
 
-/* Data Types Validation - Orange Theme */
+/* Data Types Validation - White Background */
 .property-cell.validation-types.invalid-type.has-value {
-  background: #fff7ed;
-  border-left: 3px solid #f59e0b;
+  background: white;
+  border-left: 3px solid #e5e7eb;
 }
 
 .property-cell.validation-types.valid-type.has-value {
@@ -371,6 +366,21 @@
   background: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Additional Field Icon */
+.additional-field-icon {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.missing-cell-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 /* Nested Table Styles */
@@ -491,12 +501,7 @@
   border-left: 2px solid #e5e7eb;
 }
 
-.nested-property-cell.validation-additional.actually-additional.has-value {
-  background: #f0fdf4;
-  border-left: 2px solid #10b981;
-}
-
-.nested-property-cell.validation-additional.has-value:not(.actually-additional) {
+.nested-property-cell.validation-additional.has-value {
   background: white;
   border-left: 2px solid #e5e7eb;
 }

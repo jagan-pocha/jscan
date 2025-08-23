@@ -456,6 +456,9 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                     >
                       {cellData?.hasValue ? (
                         <div className="cell-content">
+                          {cellData?.isActuallyAdditional && activeValidation === 'additional' && (
+                            <span className="additional-field-icon">➕</span>
+                          )}
                           {cellData.isNestedTable ? (
                             <button
                               className="nested-table-button"
@@ -471,7 +474,12 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                           {!cellData.isValid && !cellData.isNestedTable && <span className="type-mismatch">⚠️</span>}
                         </div>
                       ) : (
-                        <span className="missing-indicator">❌</span>
+                        <div className="missing-cell-content">
+                          {cellData?.isActuallyAdditional && activeValidation === 'additional' && (
+                            <span className="additional-field-icon">➕</span>
+                          )}
+                          <span className="missing-indicator">❌</span>
+                        </div>
                       )}
                     </td>
                   );
