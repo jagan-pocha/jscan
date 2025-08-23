@@ -45,6 +45,9 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                                 templateDef?.items?.type === 'object' &&
                                 templateDef?.items?.properties;
 
+          // Check if this field is actually an additional field (exists in JSON but not in template)
+          const isActuallyAdditional = validationType === 'additional' && !getNestedValue(template, prop);
+
           acc[prop] = {
             value: hasValue ? value : '❌',
             hasValue,
@@ -52,7 +55,8 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
             actualType,
             isValid: hasValue && (actualType === expectedType || (expectedType === 'array' && Array.isArray(value))),
             isNestedTable,
-            nestedTableData: isNestedTable ? createNestedTableData(value, templateDef.items.properties) : null
+            nestedTableData: isNestedTable ? createNestedTableData(value, templateDef.items.properties) : null,
+            isActuallyAdditional
           };
           return acc;
         }, {})
@@ -186,7 +190,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
       minWidth: 200,
       cellRenderer: (params) => (
         <span className="field-name-cell">
-          ��� {params.value}
+          📋 {params.value}
         </span>
       )
     },
@@ -447,7 +451,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                   return (
                     <td
                       key={prop}
-                      className={`property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'} validation-${activeValidation}`}
+                      className={`property-cell ${cellData?.hasValue ? 'has-value' : 'missing-value'} ${cellData?.isValid ? 'valid-type' : 'invalid-type'} ${cellData?.isActuallyAdditional ? 'actually-additional' : ''} validation-${activeValidation}`}
                       title={cellData ? `Expected: ${cellData.expectedType}, Actual: ${cellData.actualType}` : ''}
                     >
                       {cellData?.hasValue ? (
