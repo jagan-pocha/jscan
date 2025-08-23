@@ -512,8 +512,8 @@
 }
 
 .nested-property-cell.validation-types.invalid-type.has-value {
-  background: #fff7ed;
-  border-left: 2px solid #f59e0b;
+  background: white;
+  border-left: 2px solid #e5e7eb;
 }
 
 .nested-property-cell.validation-types.valid-type.has-value {
