@@ -108,7 +108,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🧩 JSCAN - JSON Validator</h1>
+        <h1><span className="app-logo">JS</span>CAN - JSON Validator</h1>
         <p>Define templates and validate JSON data with ease</p>
       </header>
       
