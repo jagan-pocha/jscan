@@ -289,8 +289,13 @@
   border-left: 3px solid #e5e7eb;
 }
 
-/* Additional Fields Validation - Green + Icon Only */
-.property-cell.validation-additional.has-value {
+/* Additional Fields Validation - Green Theme */
+.property-cell.validation-additional.actually-additional.has-value {
+  background: #f0fdf4;
+  border-left: 3px solid #10b981;
+}
+
+.property-cell.validation-additional.has-value:not(.actually-additional) {
   background: white;
   border-left: 3px solid #e5e7eb;
 }
@@ -334,20 +339,6 @@
   font-size: 14px;
   color: #f59e0b;
   font-weight: bold;
-}
-
-.additional-field-indicator {
-  color: #10b981;
-  font-weight: bold;
-  font-size: 16px;
-  margin-right: 6px;
-}
-
-.missing-cell-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
 }
 
 .data-row:hover {
@@ -500,7 +491,12 @@
   border-left: 2px solid #e5e7eb;
 }
 
-.nested-property-cell.validation-additional.has-value {
+.nested-property-cell.validation-additional.actually-additional.has-value {
+  background: #f0fdf4;
+  border-left: 2px solid #10b981;
+}
+
+.nested-property-cell.validation-additional.has-value:not(.actually-additional) {
   background: white;
   border-left: 2px solid #e5e7eb;
 }
