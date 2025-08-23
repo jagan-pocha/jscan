@@ -253,7 +253,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
           switch (issueType) {
             case 'Missing Field': return '❌';
             case 'Additional Field': return '➕';
-            case 'Type Mismatch': return '🔄';
+            case 'Type Mismatch': return '���';
             case 'Parse Error': return '💥';
             default: return '❓';
           }
@@ -507,10 +507,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                           {cellData?.isActuallyAdditional && (
                             <span className="additional-field-icon">➕</span>
                           )}
-                          {cellData?.isActuallyMissing && (
-                            <span className="missing-indicator">❌</span>
-                          )}
-                          {!cellData?.isActuallyAdditional && !cellData?.isActuallyMissing && (
+                          {activeValidation === 'missing' && (
                             <span className="missing-indicator">❌</span>
                           )}
                         </div>
