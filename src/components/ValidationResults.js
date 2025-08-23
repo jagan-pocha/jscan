@@ -45,14 +45,11 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
                                 templateDef?.items?.type === 'object' &&
                                 templateDef?.items?.properties;
 
-          // Check if this field is actually an additional field (exists in JSON but not in template)
-          const isActuallyAdditional = validationType === 'additional' && !isFieldInTemplate(template, prop);
-
-          // Check if this field is actually missing (exists in template but not in JSON)
-          const isActuallyMissing = validationType === 'missing' && !hasValue && isFieldInTemplate(template, prop);
-
-          // Check if this field has a type mismatch
-          const hasTypeMismatch = validationType === 'types' && hasValue && !isValid;
+          // Use the results array to determine the actual status of this field
+          const fieldIssue = results.find(r => r.field === prop);
+          const isActuallyAdditional = fieldIssue?.issueType === 'Additional Field';
+          const isActuallyMissing = fieldIssue?.issueType === 'Missing Field';
+          const hasTypeMismatch = fieldIssue?.issueType === 'Type Mismatch';
 
           acc[prop] = {
             value: hasValue ? value : '❌',
@@ -253,7 +250,7 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
           switch (issueType) {
             case 'Missing Field': return '❌';
             case 'Additional Field': return '➕';
-            case 'Type Mismatch': return '���';
+            case 'Type Mismatch': return '🔄';
             case 'Parse Error': return '💥';
             default: return '❓';
           }
