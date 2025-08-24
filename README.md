@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# 🧩 JSCAN - JSON Validator App
+# 🧩 JValido - JSON Validator App
 
 A powerful React application that provides a side-by-side interface for defining JSON templates and validating JSON data against them.
 
