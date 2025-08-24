@@ -1,7 +1,7 @@
 {
-  "name": "jscan",
+  "name": "jvalido",
   "version": "1.0.0",
-  "description": "JSON Validator App with Template Builder",
+  "description": "JValido - JSON Validator App with Template Builder",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
