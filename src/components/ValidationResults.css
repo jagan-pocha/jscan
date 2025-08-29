@@ -38,7 +38,7 @@
 
 .results-grid {
   flex: 1;
-  min-height: 660px;
+  height: 660px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
