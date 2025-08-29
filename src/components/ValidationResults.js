@@ -310,31 +310,27 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
 
   const getResultsSummary = () => {
     if (!results.length) return null;
-    
-    const summary = results.reduce((acc, result) => {
-      acc[result.issueType] = (acc[result.issueType] || 0) + 1;
-      return acc;
-    }, {});
+
+    // Show issue types present without counts
+    const typesPresent = Array.from(new Set(results.map(r => r.issueType)));
+
+    const getIcon = (issueType) => {
+      switch (issueType) {
+        case 'Missing Field': return '❌';
+        case 'Additional Field': return '➕';
+        case 'Type Mismatch': return '🔄';
+        case 'Parse Error': return '💥';
+        default: return '❓';
+      }
+    };
 
     return (
       <div className="results-summary">
-        {Object.entries(summary).map(([type, count]) => {
-          const getIcon = (issueType) => {
-            switch (issueType) {
-              case 'Missing Field': return '❌';
-              case 'Additional Field': return '➕';
-              case 'Type Mismatch': return '🔄';
-              case 'Parse Error': return '💥';
-              default: return '❓';
-            }
-          };
-          
-          return (
-            <div key={type} className="summary-item">
-              {getIcon(type)} {count} {type}{count > 1 ? 's' : ''}
-            </div>
-          );
-        })}
+        {typesPresent.map((type) => (
+          <div key={type} className="summary-item">
+            {getIcon(type)} {type}
+          </div>
+        ))}
       </div>
     );
   };
@@ -528,7 +524,40 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
         {getResultsSummary()}
       </div>
 
-      {enhancedTableData && hasValidationIssues() ? (
+      {activeValidation === 'types' ? (
+        results && results.length > 0 ? (
+          <div className="types-table-wrapper">
+            <table className="types-table">
+              <thead>
+                <tr>
+                  <th>Field Name</th>
+                  <th>Expected Type</th>
+                  <th>Actual Type</th>
+                  <th>Issue Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results
+                  .filter(r => r.issueType === 'Type Mismatch')
+                  .map((r, i) => (
+                    <tr key={i}>
+                      <td className="field-name-cell">📋 {r.field}</td>
+                      <td><span className="expected-type-cell">{r.expectedType}</span></td>
+                      <td><span className="actual-type-cell">{r.actualType}</span></td>
+                      <td><span className="issue-type-cell issue-mismatch">🔄 Type Mismatch</span></td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="no-issues-found">
+            <div className="no-issues-icon">✓</div>
+            <h4>{getNoIssuesMessage().title}</h4>
+            <p>{getNoIssuesMessage().message}</p>
+          </div>
+        )
+      ) : enhancedTableData && hasValidationIssues() ? (
         renderEnhancedTable()
       ) : enhancedTableData && activeValidation ? (
         <div className="no-issues-found">

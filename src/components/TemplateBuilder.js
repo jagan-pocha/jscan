@@ -22,9 +22,10 @@ const TemplateBuilder = ({ template, setTemplate }) => {
 
     try {
       const parsed = JSON.parse(input);
+      const normalized = Array.isArray(parsed) ? (parsed[0] || {}) : parsed;
       setIsValidTemplate(true);
       setTemplateError('');
-      setTemplate(parsed);
+      setTemplate(normalized);
     } catch (error) {
       setIsValidTemplate(false);
       setTemplateError(error.message);
