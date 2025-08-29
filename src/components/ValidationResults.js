@@ -526,19 +526,29 @@ const ValidationResults = ({ results, activeValidation, template, jsonData, pars
 
       {activeValidation === 'types' ? (
         results && results.length > 0 ? (
-          <div className="ag-theme-alpine results-grid">
-            <AgGridReact
-              rowData={results}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              headerHeight={45}
-              rowHeight={50}
-              suppressRowClickSelection={true}
-              suppressCellFocus={true}
-              animateRows={true}
-              enableRangeSelection={false}
-              suppressMenuHide={true}
-            />
+          <div className="types-table-wrapper">
+            <table className="types-table">
+              <thead>
+                <tr>
+                  <th>Field Name</th>
+                  <th>Expected Type</th>
+                  <th>Actual Type</th>
+                  <th>Issue Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results
+                  .filter(r => r.issueType === 'Type Mismatch')
+                  .map((r, i) => (
+                    <tr key={i}>
+                      <td className="field-name-cell">📋 {r.field}</td>
+                      <td><span className="expected-type-cell">{r.expectedType}</span></td>
+                      <td><span className="actual-type-cell">{r.actualType}</span></td>
+                      <td><span className="issue-type-cell issue-mismatch">🔄 Type Mismatch</span></td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         ) : (
           <div className="no-issues-found">
