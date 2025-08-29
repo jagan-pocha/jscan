@@ -37,25 +37,38 @@ function App() {
   const performValidation = (template, data, type) => {
     const results = [];
 
-    if (type === 'missing') {
-      findMissingFields(template, data, results, '');
-    } else if (type === 'additional') {
-      findAdditionalFields(template, data, results, '');
-    } else if (type === 'types') {
-      checkDataTypes(template, data, results, '');
-    } else if (type === 'all') {
-      findMissingFields(template, data, results, '');
-      findAdditionalFields(template, data, results, '');
-      checkDataTypes(template, data, results, '');
+    const handle = (item, rowIndex = null) => {
+      if (type === 'missing') {
+        findMissingFields(template, item, results, '');
+      } else if (type === 'additional') {
+        findAdditionalFields(template, item, results, '');
+      } else if (type === 'types') {
+        checkDataTypes(template, item, results, '', rowIndex);
+      } else if (type === 'all') {
+        findMissingFields(template, item, results, '');
+        findAdditionalFields(template, item, results, '');
+        checkDataTypes(template, item, results, '', rowIndex);
+      }
+    };
+
+    if (Array.isArray(data)) {
+      data.forEach((item, idx) => handle(item, idx + 1));
+    } else {
+      handle(data, null);
     }
 
     return results;
   };
 
   const findMissingFields = (template, data, results, path) => {
+    if (Array.isArray(data)) {
+      data.forEach(item => findMissingFields(template, item || {}, results, path));
+      return;
+    }
+
     Object.keys(template).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
-      if (!(key in data)) {
+      if (!(key in (data || {}))) {
         results.push({
           field: currentPath,
           expectedType: template[key].type || 'unknown',
@@ -69,37 +82,66 @@ function App() {
   };
 
   const findAdditionalFields = (template, data, results, path) => {
-    Object.keys(data).forEach(key => {
+    if (Array.isArray(data)) {
+      data.forEach(item => findAdditionalFields(template, item || {}, results, path));
+      return;
+    }
+
+    Object.keys(data || {}).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
       if (!(key in template)) {
         results.push({
           field: currentPath,
           expectedType: 'Not defined',
-          actualType: typeof data[key],
+          actualType: Array.isArray(data[key]) ? 'array' : typeof data[key],
           issueType: 'Additional Field'
         });
-      } else if (template[key] && template[key].type === 'object' && template[key].properties && typeof data[key] === 'object') {
+      } else if (template[key] && template[key].type === 'object' && template[key].properties && typeof data[key] === 'object' && !Array.isArray(data[key])) {
         findAdditionalFields(template[key].properties, data[key], results, currentPath);
       }
     });
   };
 
-  const checkDataTypes = (template, data, results, path) => {
+  const checkDataTypes = (template, data, results, path, rowIndex = null) => {
+    if (Array.isArray(data)) {
+      data.forEach((item, idx) => checkDataTypes(template, item, results, path, rowIndex ?? idx + 1));
+      return;
+    }
+
     Object.keys(template).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
-      if (key in data) {
+      if (data && key in data) {
         const expectedType = template[key].type;
-        const actualType = Array.isArray(data[key]) ? 'array' : typeof data[key];
-        
+        const value = data[key];
+        const actualType = Array.isArray(value) ? 'array' : typeof value;
+
+        const fieldWithRow = rowIndex ? `row ${rowIndex}: ${currentPath}` : currentPath;
+
         if (expectedType !== actualType) {
           results.push({
-            field: currentPath,
+            field: fieldWithRow,
             expectedType,
             actualType,
             issueType: 'Type Mismatch'
           });
-        } else if (expectedType === 'object' && template[key].properties) {
-          checkDataTypes(template[key].properties, data[key], results, currentPath);
+        } else if (expectedType === 'object' && template[key].properties && value && typeof value === 'object' && !Array.isArray(value)) {
+          checkDataTypes(template[key].properties, value, results, currentPath, rowIndex);
+        } else if (expectedType === 'array' && Array.isArray(value) && template[key].items) {
+          const itemDef = template[key].items;
+          value.forEach((el, i) => {
+            const elType = Array.isArray(el) ? 'array' : typeof el;
+            const itemPath = `${currentPath}[${i + 1}]`;
+            if (itemDef.type === 'object' && itemDef.properties && el && typeof el === 'object' && !Array.isArray(el)) {
+              checkDataTypes(itemDef.properties, el, results, itemPath, rowIndex);
+            } else if (itemDef.type && itemDef.type !== elType) {
+              results.push({
+                field: rowIndex ? `row ${rowIndex}: ${itemPath}` : itemPath,
+                expectedType: itemDef.type,
+                actualType: elType,
+                issueType: 'Type Mismatch'
+              });
+            }
+          });
         }
       }
     });
