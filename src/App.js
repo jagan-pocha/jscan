@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import TemplateBuilder from './components/TemplateBuilder';
 import JsonInput from './components/JsonInput';
 import ValidationResults from './components/ValidationResults';
@@ -10,6 +10,8 @@ function App() {
   const [validationResults, setValidationResults] = useState([]);
   const [activeValidation, setActiveValidation] = useState(null);
 
+  const normalizedTemplate = useMemo(() => (Array.isArray(template) ? (template[0] || {}) : template), [template]);
+
   const validateJson = useCallback((type) => {
     if (!jsonData.trim()) {
       setValidationResults([]);
@@ -19,7 +21,7 @@ function App() {
 
     try {
       const parsedData = JSON.parse(jsonData);
-      const results = performValidation(template, parsedData, type);
+      const results = performValidation(normalizedTemplate, parsedData, type);
       setValidationResults(results);
       setActiveValidation(type);
     } catch (error) {
@@ -32,7 +34,7 @@ function App() {
       }]);
       setActiveValidation(type);
     }
-  }, [template, jsonData]);
+  }, [normalizedTemplate, jsonData]);
 
   const performValidation = (template, data, type) => {
     const results = [];
@@ -190,7 +192,7 @@ function App() {
           <ValidationResults
             results={validationResults}
             activeValidation={activeValidation}
-            template={template}
+            template={normalizedTemplate}
             jsonData={jsonData}
             parsedJsonData={jsonData.trim() ? (() => {
               try { return JSON.parse(jsonData); } catch { return null; }
