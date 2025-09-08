@@ -1,0 +1,21 @@
+.global-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.global-header__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.global-header__logo {
+  font-weight: 800;
+  color: #111;
+  letter-spacing: 0.5px;
+}

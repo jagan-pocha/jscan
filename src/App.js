@@ -3,6 +3,7 @@ import TemplateBuilder from './components/TemplateBuilder';
 import JsonInput from './components/JsonInput';
 import ValidationResults from './components/ValidationResults';
 import './App.css';
+import './components/GlobalHeader.css';
 
 function App() {
   const [template, setTemplate] = useState({});
@@ -150,7 +151,13 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <>
+      <div className="global-header">
+        <div className="global-header__inner">
+          <span className="global-header__logo">LOGO</span>
+        </div>
+      </div>
+      <div className="app">
       <header className="app-header">
         <h1><span className="app-logo">J</span>Valido - JSON Validator</h1>
         <p>Define templates and validate JSON data with ease</p>
@@ -201,6 +208,7 @@ function App() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
