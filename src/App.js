@@ -152,7 +152,10 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1><span className="app-logo">J</span>Valido - JSON Validator</h1>
+        <div className="header-main">
+          <div className="logo-slot" aria-label="Logo placeholder" />
+          <h1>JValido - JSON Validator</h1>
+        </div>
         <p>Define templates and validate JSON data with ease</p>
       </header>
       
