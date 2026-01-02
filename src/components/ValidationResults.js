@@ -6,7 +6,6 @@ import Modal from './Modal';
 import './ValidationResults.css';
 
 const ValidationResults = ({ results, activeValidation, template, jsonData, parsedJsonData }) => {
-  const [expandedNested, setExpandedNested] = React.useState(new Set());
   const [modalData, setModalData] = React.useState(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const createDataTable = () => {

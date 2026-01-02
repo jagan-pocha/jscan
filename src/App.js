@@ -4,6 +4,7 @@ import JsonInput from './components/JsonInput';
 import ValidationResults from './components/ValidationResults';
 import './App.css';
 import './components/GlobalHeader.css';
+import './components/GlobalFooter.css';
 
 function App() {
   const [template, setTemplate] = useState({});
@@ -14,14 +15,47 @@ function App() {
   const normalizedTemplate = useMemo(() => (Array.isArray(template) ? (template[0] || {}) : template), [template]);
 
   const validateJson = useCallback((type) => {
+    // Check if template is empty
+    if (!normalizedTemplate || Object.keys(normalizedTemplate).length === 0) {
+      setValidationResults([{
+        field: 'Template Error',
+        expectedType: 'Valid Template',
+        actualType: 'Empty Template',
+        issueType: 'Parse Error',
+        message: 'Please define a template before validating'
+      }]);
+      setActiveValidation(type);
+      return;
+    }
+
     if (!jsonData.trim()) {
-      setValidationResults([]);
+      setValidationResults([{
+        field: 'Data Error',
+        expectedType: 'Valid JSON Data',
+        actualType: 'Empty Data',
+        issueType: 'Parse Error',
+        message: 'Please provide JSON data to validate'
+      }]);
       setActiveValidation(type);
       return;
     }
 
     try {
       const parsedData = JSON.parse(jsonData);
+
+      // Validate that parsedData is an object or array
+      if (typeof parsedData !== 'object' || parsedData === null) {
+        setValidationResults([{
+          field: 'Data Error',
+          expectedType: 'Object or Array',
+          actualType: typeof parsedData,
+          issueType: 'Parse Error',
+          message: 'JSON data must be an object or array of objects'
+        }]);
+        setActiveValidation(type);
+        return;
+      }
+
       const results = performValidation(normalizedTemplate, parsedData, type);
       setValidationResults(results);
       setActiveValidation(type);
@@ -72,6 +106,7 @@ function App() {
     Object.keys(template).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
       if (!(key in (data || {}))) {
+        // Field exists in template but not in data - it's missing
         results.push({
           field: currentPath,
           expectedType: template[key].type || 'unknown',
@@ -79,7 +114,18 @@ function App() {
           issueType: 'Missing Field'
         });
       } else if (template[key].type === 'object' && template[key].properties) {
-        findMissingFields(template[key].properties, data[key] || {}, results, currentPath);
+        // Recursively check nested objects
+        const value = data[key];
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          findMissingFields(template[key].properties, value, results, currentPath);
+        }
+      } else if (template[key].type === 'array' && Array.isArray(data[key]) && template[key].items && template[key].items.type === 'object' && template[key].items.properties) {
+        // Check for missing fields in array items
+        data[key].forEach((item, idx) => {
+          if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+            findMissingFields(template[key].items.properties, item, results, `${currentPath}[${idx}]`);
+          }
+        });
       }
     });
   };
@@ -93,14 +139,45 @@ function App() {
     Object.keys(data || {}).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
       if (!(key in template)) {
+        // Field exists in data but not in template - it's additional
+        const value = data[key];
         results.push({
           field: currentPath,
-          expectedType: 'Not defined',
-          actualType: Array.isArray(data[key]) ? 'array' : typeof data[key],
+          expectedType: 'Not defined in template',
+          actualType: Array.isArray(value) ? 'array' : (value === null ? 'null' : typeof value),
           issueType: 'Additional Field'
         });
-      } else if (template[key] && template[key].type === 'object' && template[key].properties && typeof data[key] === 'object' && !Array.isArray(data[key])) {
+        // If the additional field is an object, recursively check its nested fields too
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          findAdditionalFieldsInUnknownObject(value, results, currentPath);
+        }
+      } else if (template[key] && template[key].type === 'object' && template[key].properties && typeof data[key] === 'object' && data[key] !== null && !Array.isArray(data[key])) {
+        // Recursively check nested objects that exist in template
         findAdditionalFields(template[key].properties, data[key], results, currentPath);
+      } else if (template[key] && template[key].type === 'array' && Array.isArray(data[key]) && template[key].items && template[key].items.type === 'object' && template[key].items.properties) {
+        // Check for additional fields in array items
+        data[key].forEach((item, idx) => {
+          if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+            findAdditionalFields(template[key].items.properties, item, results, `${currentPath}[${idx}]`);
+          }
+        });
+      }
+    });
+  };
+
+  // Helper function to find all fields in an object not defined in template
+  const findAdditionalFieldsInUnknownObject = (obj, results, path) => {
+    Object.keys(obj || {}).forEach(key => {
+      const currentPath = `${path}.${key}`;
+      const value = obj[key];
+      results.push({
+        field: currentPath,
+        expectedType: 'Not defined in template',
+        actualType: Array.isArray(value) ? 'array' : (value === null ? 'null' : typeof value),
+        issueType: 'Additional Field'
+      });
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        findAdditionalFieldsInUnknownObject(value, results, currentPath);
       }
     });
   };
@@ -152,17 +229,12 @@ function App() {
 
   return (
     <>
-      <div className="global-header">
-        <div className="global-header__inner">
-          <span className="global-header__logo">LOGO</span>
-        </div>
-      </div>
       <div className="app">
       <header className="app-header">
         <h1><span className="app-logo">J</span>Valido - JSON Validator</h1>
         <p>Define templates and validate JSON data with ease</p>
       </header>
-      
+
       <div className="app-content">
         <div className="top-panels">
           <div className="left-panel">
@@ -208,6 +280,25 @@ function App() {
         </div>
       </div>
     </div>
+
+    <footer className="global-footer">
+      <div className="global-footer__inner">
+        <div className="global-footer__copyright">
+          <span className="global-footer__copyright-symbol">©</span>
+          <span>Copyright</span>
+          <span className="global-footer__brand">BAR</span>
+        </div>
+        <div className="global-footer__contact">
+          <span>Contact:</span>
+          <a
+            href="mailto:build.and.render1998@gmail.com"
+            className="global-footer__email"
+          >
+            build.and.render1998@gmail.com
+          </a>
+        </div>
+      </div>
+    </footer>
     </>
   );
 }

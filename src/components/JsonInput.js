@@ -22,6 +22,35 @@ const JsonInput = ({ jsonData, setJsonData }) => {
 
     try {
       const parsed = JSON.parse(input);
+
+      // Validate that data is an object or array of objects
+      if (typeof parsed !== 'object' || parsed === null) {
+        setIsValidJson(false);
+        setJsonError('JSON data must be an object or array of objects');
+        setFormattedJson('');
+        setParsedData(null);
+        return;
+      }
+
+      // If it's an array, validate all items are objects
+      if (Array.isArray(parsed)) {
+        if (parsed.length === 0) {
+          setIsValidJson(false);
+          setJsonError('Array cannot be empty');
+          setFormattedJson('');
+          setParsedData(null);
+          return;
+        }
+        const invalidItems = parsed.filter(item => typeof item !== 'object' || item === null || Array.isArray(item));
+        if (invalidItems.length > 0) {
+          setIsValidJson(false);
+          setJsonError('All array items must be objects (found non-object items)');
+          setFormattedJson('');
+          setParsedData(null);
+          return;
+        }
+      }
+
       const formatted = JSON.stringify(parsed, null, 2);
       setIsValidJson(true);
       setJsonError('');
@@ -93,6 +122,58 @@ const JsonInput = ({ jsonData, setJsonData }) => {
     setJsonData(JSON.stringify(sampleData, null, 2));
   };
 
+  const loadSampleArray = () => {
+    const sampleArray = [
+      {
+        "name": "John Doe",
+        "age": 30,
+        "email": "john@example.com",
+        "isActive": true,
+        "address": {
+          "street": "123 Main St",
+          "city": "New York",
+          "zipCode": "10001"
+        },
+        "hobbies": ["reading", "coding"],
+        "skills": [
+          {
+            "name": "JavaScript",
+            "level": 8,
+            "certified": true
+          }
+        ],
+        "metadata": {
+          "createdAt": "2024-01-01",
+          "updatedAt": "2024-01-15"
+        }
+      },
+      {
+        "name": "Jane Smith",
+        "age": 28,
+        "email": "jane@example.com",
+        "isActive": false,
+        "address": {
+          "street": "456 Oak Ave",
+          "city": "Boston",
+          "zipCode": "02101"
+        },
+        "hobbies": ["painting", "yoga"],
+        "skills": [
+          {
+            "name": "Python",
+            "level": 9,
+            "certified": true
+          }
+        ],
+        "metadata": {
+          "createdAt": "2024-01-05",
+          "updatedAt": "2024-01-20"
+        }
+      }
+    ];
+    setJsonData(JSON.stringify(sampleArray, null, 2));
+  };
+
   return (
     <div className="json-input">
       <div className="json-input-header">
@@ -102,7 +183,10 @@ const JsonInput = ({ jsonData, setJsonData }) => {
             Format
           </button>
           <button onClick={loadSampleJson} className="sample-btn">
-            Sample
+            Sample Object
+          </button>
+          <button onClick={loadSampleArray} className="sample-btn">
+            Sample Array
           </button>
           <button onClick={clearJson} className="clear-btn">
             Clear
@@ -118,7 +202,7 @@ const JsonInput = ({ jsonData, setJsonData }) => {
         )}
         {isValidJson && jsonData.trim() && parsedData !== null && (
           <div className="json-valid">
-            <strong>Valid JSON</strong>
+            <strong>Valid JSON</strong> - {Array.isArray(parsedData) ? `Array of ${parsedData.length} object${parsedData.length !== 1 ? 's' : ''}` : 'Single Object'}
           </div>
         )}
         {!jsonData.trim() && (

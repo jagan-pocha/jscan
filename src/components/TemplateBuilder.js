@@ -22,14 +22,92 @@ const TemplateBuilder = ({ template, setTemplate }) => {
 
     try {
       const parsed = JSON.parse(input);
+
+      // Validate that template is an object (not array, string, number, etc.)
+      if (typeof parsed !== 'object' || parsed === null) {
+        setIsValidTemplate(false);
+        setTemplateError('Template must be a valid JSON object');
+        setTemplate({});
+        return;
+      }
+
+      // If array is provided, take first element (for backwards compatibility)
       const normalized = Array.isArray(parsed) ? (parsed[0] || {}) : parsed;
+
+      // Validate template structure
+      const validationError = validateTemplateStructure(normalized);
+      if (validationError) {
+        setIsValidTemplate(false);
+        setTemplateError(validationError);
+        setTemplate({});
+        return;
+      }
+
       setIsValidTemplate(true);
       setTemplateError('');
       setTemplate(normalized);
     } catch (error) {
       setIsValidTemplate(false);
       setTemplateError(error.message);
+      setTemplate({});
     }
+  };
+
+  const validateTemplateStructure = (template) => {
+    if (typeof template !== 'object' || template === null || Array.isArray(template)) {
+      return 'Template must be a JSON object';
+    }
+
+    // Check if template has at least one field
+    if (Object.keys(template).length === 0) {
+      return 'Template cannot be empty';
+    }
+
+    // Validate each field has a type
+    for (const key in template) {
+      const field = template[key];
+      if (typeof field !== 'object' || field === null) {
+        return `Field "${key}" must have a type definition object`;
+      }
+      if (!field.type) {
+        return `Field "${key}" is missing a "type" property`;
+      }
+
+      const validTypes = ['string', 'number', 'boolean', 'object', 'array'];
+      if (!validTypes.includes(field.type)) {
+        return `Field "${key}" has invalid type "${field.type}". Valid types: ${validTypes.join(', ')}`;
+      }
+
+      // Validate object type has properties
+      if (field.type === 'object' && !field.properties) {
+        return `Field "${key}" with type "object" must have a "properties" definition`;
+      }
+
+      // Validate array type has items
+      if (field.type === 'array' && !field.items) {
+        return `Field "${key}" with type "array" must have an "items" definition`;
+      }
+
+      // Recursively validate nested objects
+      if (field.type === 'object' && field.properties) {
+        const nestedError = validateTemplateStructure(field.properties);
+        if (nestedError) {
+          return `In "${key}": ${nestedError}`;
+        }
+      }
+
+      // Validate array items
+      if (field.type === 'array' && field.items) {
+        if (field.items.type === 'object' && field.items.properties) {
+          const nestedError = validateTemplateStructure(field.items.properties);
+          if (nestedError) {
+            return `In "${key}" items: ${nestedError}`;
+          }
+        }
+      }
+    }
+
+    return null; // No errors
   };
 
   const handleTemplateChange = (e) => {
@@ -40,38 +118,38 @@ const TemplateBuilder = ({ template, setTemplate }) => {
 
   const loadSampleTemplate = () => {
     const sampleTemplate = {
-      "name": { type: "string" },
-      "age": { type: "number" },
-      "email": { type: "string" },
-      "isActive": { type: "boolean" },
+      "name": { "type": "string" },
+      "age": { "type": "number" },
+      "email": { "type": "string" },
+      "isActive": { "type": "boolean" },
       "address": {
-        type: "object",
-        properties: {
-          "street": { type: "string" },
-          "city": { type: "string" },
-          "zipCode": { type: "string" }
+        "type": "object",
+        "properties": {
+          "street": { "type": "string" },
+          "city": { "type": "string" },
+          "zipCode": { "type": "string" }
         }
       },
       "hobbies": {
-        type: "array",
-        items: { type: "string" }
+        "type": "array",
+        "items": { "type": "string" }
       },
       "skills": {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            "name": { type: "string" },
-            "level": { type: "number" },
-            "certified": { type: "boolean" }
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "level": { "type": "number" },
+            "certified": { "type": "boolean" }
           }
         }
       },
       "metadata": {
-        type: "object",
-        properties: {
-          "createdAt": { type: "string" },
-          "updatedAt": { type: "string" }
+        "type": "object",
+        "properties": {
+          "createdAt": { "type": "string" },
+          "updatedAt": { "type": "string" }
         }
       }
     };
